@@ -2,10 +2,12 @@
 import Image from 'next/image'
 import {useEffect, useState, useRef} from 'react';
 import {CSVLink, CSVDownload} from "react-csv";
-
+import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 export default function Home() {
     useEffect(() => {
-        if(youtubeJsonData?.length > 0) {
+        if (youtubeJsonData
+            ?.length > 0) {
             return;
         };
         fetchYoutubeData();
@@ -13,12 +15,10 @@ export default function Home() {
     const [youtubeJsonData,
         setyoutubeJsonData] = useState < any > ([]);
     const youtubeJsonDataRef = useRef(youtubeJsonData);
-
     const [csvData,
         setcsvData] = useState < any > ([])
     const [download,
         setDownload] = useState(false);
-
     const [youtube_video_url,
         setyoutube_video_url] = useState < any > ("");
     const change_youtube_video_url = (e : any) => {
@@ -48,31 +48,30 @@ export default function Home() {
         }
     };
 
-
-
     const handleUpdate = async(jsondata : any, category : any) => {
-        if (category === "skip") {
-            setyoutubeJsonData(youtubeJsonData
-                ?.slice(1) || []);
-        } else {
-            const response = await fetch(`/api/${category}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsondata)
-            });
+        if (!(youtubeJsonDataRef.current.length > 0)) {
+            console.log("returned in handleupdate")
+            return;
+        }
+        console.log("handle update triggered")
+        const response = await fetch(`/api/${category}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsondata)
+        });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-            const data = await response.json();
-            console.log(data.message); // "Item updated successfully"
+        const data = await response.json();
 
-            setyoutubeJsonData(youtubeJsonData
-                ?.slice(1) || []);
-        };
+        let newyoutubedata = data.message || [];
+        setyoutubeJsonData(newyoutubedata);
+        youtubeJsonDataRef.current = newyoutubedata;
+
     };
 
     const handleBad = (jsondata : any) => {
@@ -88,9 +87,13 @@ export default function Home() {
     };
 
     async function handleKeyDown(e : any) {
+        console.log("handleKeyDown triggered")
         if (!(youtubeJsonDataRef.current.length > 0)) {
+            console.log("returned")
             return;
         }
+        console.log("handleKeyDown triggered went through")
+
         switch (e.key) {
             case "ArrowLeft":
                 handleBad(youtubeJsonDataRef.current[0]);
@@ -102,13 +105,11 @@ export default function Home() {
     };
 
     useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
 
-        document.addEventListener('keydown', handleKeyDown);
-        function cleanup() {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-
-        return () => cleanup();
+    return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+    };
     }, []);
 
     const handleDownload = async(e : any) => {
@@ -129,24 +130,24 @@ export default function Home() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-
+        <main
+            className="flex min-h-screen flex-col items-center justify-between p-24">
             {youtubeJsonData
-                ?.length && <div> {
-                    youtubeJsonData
-                        ?.length + " "
-                }
-                total </div>}
+                ?.length && <div>
+                    {youtubeJsonData
+                        ?.length + " total"
+}
+                </div>}
 
             <br/>
 
             <div className="card w-150 bg-base-100 shadow-xl">
-
-            {youtubeJsonData[0]
-                ?.video_id && <iframe
-                    height="315"
-                    src={`https://www.youtube-nocookie.com/embed/${youtubeJsonData[0]?.video_id}?autoplay=0&mute=0`}
-                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>}
+                {youtubeJsonData[0]
+                    ?.video_id && <LiteYouTubeEmbed
+                    id={`${youtubeJsonData[0]?.video_id}`}
+                    title={`${youtubeJsonData[0]?.title}`}
+                  />
+}
                 <div className="card-body">
                     <h2 className="card-title">{youtubeJsonData[0]
                             ?.title}
@@ -158,7 +159,7 @@ export default function Home() {
                             href={`https://www.youtube.com/watch?v=${youtubeJsonData[0]
                             ?.video_id}`}>
                             {`https://www.youtube.com/watch?v=${youtubeJsonData[0]
-                            ?.video_id}`}
+                                ?.video_id}`}
                         </a>
                     </span>
                     <div className="card-actions justify-center">
@@ -166,11 +167,11 @@ export default function Home() {
                             onClick={(e) => handleSkip(youtubeJsonData[0])}
                             className="btn btn-primary">Skip</button>
                         <button
-                            onClick={(e) => handleGood(youtubeJsonData[0])}
-                            className="btn btn-secondary">Good</button>
-                        <button
                             onClick={(e) => handleBad(youtubeJsonData[0])}
                             className="btn btn-accent">Bad</button>
+                        <button
+                            onClick={(e) => handleGood(youtubeJsonData[0])}
+                            className="btn btn-secondary">Good</button>
                     </div>
                     <div className="d-flex justify-center flex-col">
                         <div className="badge ">Left arrow (Bad)</div>

@@ -1,14 +1,10 @@
-import {NextResponse} from 'next/server';
-import sqlite3 from 'sqlite3';
-import {open} from 'sqlite';
-import path from 'path';
-
-
+import { NextResponse } from 'next/server';
+import { getDatabase } from '../database';
 export async function POST(req: Request) {
-    const dbPath = path.join(process.cwd(), 'app/localhost.db');
-    const db = await open({filename: dbPath, driver: sqlite3.cached.Database});
-    const body = await req.json();
-        const item =body;
+    try {
+        const db = await getDatabase();
+        const body = await req.json();
+        const item = body;
         const {
             title,
             thumbnails,
@@ -19,6 +15,9 @@ export async function POST(req: Request) {
         } = item;
         await db.run(`UPDATE items SET label = 'bad', status="complete" WHERE video_id = ?`, [video_id]);
         const items = await db.all('SELECT * FROM items where status="incomplete"');
-        await db.close();
-        return  NextResponse.json({ message: items }, { status: 200 });
+        return NextResponse.json({ message: items }, { status: 200 });
+    } catch (e) {
+        console.log(e);
+        return NextResponse.json({ message: "error" });
+    }
 }

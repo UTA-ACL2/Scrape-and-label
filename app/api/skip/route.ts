@@ -14,7 +14,7 @@ export async function POST(req: Request) {
             channel,
             video_id
         } = item;
-        await db.run(`UPDATE items SET label = 'good', status="complete" WHERE video_id = ?`, [video_id]);
+        await db.run(`UPDATE items SET label = 'skip', status="complete" WHERE video_id = ?`, [video_id]);
         const items = await db.all('SELECT * FROM items where status="incomplete"');
         return NextResponse.json({ message: items }, { status: 200 });
     } catch (e) {
