@@ -1,10 +1,12 @@
 import {NextResponse} from 'next/server';
 import sqlite3 from 'sqlite3';
 import {open} from 'sqlite';
+import path from 'path';
 
 
 export async function POST(req: Request) {
-    const db = await open({filename: '../../localhost.db', driver: sqlite3.cached.Database});
+    const dbPath = path.join(process.cwd(), 'app/localhost.db');
+    const db = await open({filename: dbPath, driver: sqlite3.cached.Database});
     const body = await req.json();
         const item =body;
         const {

@@ -134,7 +134,7 @@ export default function Home() {
             {youtubeJsonData
                 ?.length && <div> {
                     youtubeJsonData
-                        ?.length
+                        ?.length + " "
                 }
                 total </div>}
 
@@ -142,13 +142,11 @@ export default function Home() {
 
             <div className="card w-150 bg-base-100 shadow-xl">
 
-                {youtubeJsonData[0]
-                    ?.video_id && <iframe
-                        height="315"
-                        src={`https://www.youtube-nocookie.com/embed/${youtubeJsonData[0]
-                        ?.video_id}?autoplay=0&mute=0`}
-                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>}
-
+            {youtubeJsonData[0]
+                ?.video_id && <iframe
+                    height="315"
+                    src={`https://www.youtube-nocookie.com/embed/${youtubeJsonData[0]?.video_id}?autoplay=0&mute=0`}
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>}
                 <div className="card-body">
                     <h2 className="card-title">{youtubeJsonData[0]
                             ?.title}
@@ -156,10 +154,11 @@ export default function Home() {
                     </h2>
                     <span>
                         <a
+                            target='_blank'
                             href={`https://www.youtube.com/watch?v=${youtubeJsonData[0]
                             ?.video_id}`}>
-                            {youtubeJsonData[0]
-                                ?.video_id}
+                            {`https://www.youtube.com/watch?v=${youtubeJsonData[0]
+                            ?.video_id}`}
                         </a>
                     </span>
                     <div className="card-actions justify-center">
