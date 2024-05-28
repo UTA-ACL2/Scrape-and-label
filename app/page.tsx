@@ -1,16 +1,37 @@
-"use client";
+'use client'
 import Image from 'next/image'
 import {useEffect, useState, useRef} from 'react';
 import {CSVLink, CSVDownload} from "react-csv";
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
+import api from './api/api';
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
+    const router =  useRouter();
+
+    // Use router inside useEffect to ensure it's not being used in server-side rendering
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/login');
+        };
+    }, []);
+    const checkTokenAndCallApi = async (apiFunction:any, ...params:any) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/login');
+            return;
+        }
+        return await apiFunction(...params);
+    };
+    useEffect(() => {
+     
         if (youtubeJsonData
             ?.length > 0) {
             return;
         };
-        fetchYoutubeData();
+        checkTokenAndCallApi(fetchYoutubeData);
     }, []);
     const [youtubeJsonData,
         setyoutubeJsonData] = useState < any > ([]);
@@ -28,62 +49,58 @@ export default function Home() {
 
     const fetchYoutubeData = async() => {
         try {
-            const response = await fetch('api/fetch', {
+            const response = await api.get('api/fetch', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                cache: 'no-cache'
+                }
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            const staticData = await response.json();
+            const staticData = response.data;
             setyoutubeJsonData(staticData.message);
             youtubeJsonDataRef.current = staticData.message;
         } catch (error) {
             console.error('An error occurred while fetching the YouTube data:', error);
         }
     };
-
-    const handleUpdate = async(jsondata : any, category : any) => {
-        if (!(youtubeJsonDataRef.current.length > 0)) {
-            console.log("returned in handleupdate")
-            return;
-        }
-        console.log("handle update triggered")
-        const response = await fetch(`/api/${category}`, {
-            method: 'POST',
+const handleUpdate = async(jsondata : any, category : any) => {
+    if (!(youtubeJsonDataRef.current.length > 0)) {
+        console.log("returned in handleupdate")
+        return;
+    }
+    try {
+        const response = await api.post(`/api/${category}`, jsondata, {
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsondata)
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = response.data;
 
         let newyoutubedata = data.message || [];
         setyoutubeJsonData(newyoutubedata);
         youtubeJsonDataRef.current = newyoutubedata;
-
-    };
+    } catch (error) {
+        console.error(`An error occurred: ${error}`);
+    }
+};
 
     const handleBad = (jsondata : any) => {
-        handleUpdate(jsondata, "bad");
+        checkTokenAndCallApi(handleUpdate, jsondata, "bad");
     };
 
     const handleGood = (jsondata : any) => {
-        handleUpdate(jsondata, "good");
+        checkTokenAndCallApi(handleUpdate, jsondata, "good");
+
+
     };
 
     const handleSkip = (jsondata : any) => {
-        handleUpdate(jsondata, "skip");
+        checkTokenAndCallApi(handleUpdate, jsondata, "skip");
+
     };
 
     async function handleKeyDown(e : any) {

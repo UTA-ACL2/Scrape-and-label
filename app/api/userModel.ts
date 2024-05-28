@@ -1,0 +1,46 @@
+import mongoose, { Document, Model, models } from 'mongoose';
+import bcrypt from 'bcryptjs';
+
+interface IUser {
+    username: string;
+    password: string;
+    role: 'admin' | 'student' | 'usurper';
+    isActive: boolean;
+    createdAt: Date;
+}
+
+interface IUserDocument extends IUser, Document {
+    validatePassword: (password: string) => boolean;
+}
+const userSchema = new mongoose.Schema<IUserDocument>({
+    username: String,
+    password: String,
+    role: {
+        type: String,
+        enum: ['admin', 'student', 'usurper'],
+        default: 'student'
+    },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+userSchema.methods.validatePassword = function(password: string) {
+    return bcrypt.compareSync(password, this.password);
+};
+
+userSchema.pre('save', async function(next) {
+    if (this.isModified('password') && this.password) {
+        (this as any).password = await bcrypt.hash(this.password, 12);
+    }
+    next();
+});
+
+const User: Model<IUserDocument> = models.User || mongoose.model('User', userSchema);
+
+export default User;

@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import Item from '../itemModel';
+import { authenticateToken, NextRequestWithUser } from '../jwtMiddleware';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequestWithUser) {
     try {
+        const authResponse = await authenticateToken(req);
+        if (authResponse.status !== 200) {
+            return authResponse;
+        }
         const body = await req.json();
         const item = body;
         const {
