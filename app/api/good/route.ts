@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getDatabase } from '../database';
+import Item from '../itemModel';
 
 export async function POST(req: Request) {
     try {
-        const db = await getDatabase();
         const body = await req.json();
         const item = body;
         const {
@@ -14,8 +13,8 @@ export async function POST(req: Request) {
             channel,
             video_id
         } = item;
-        await db.run(`UPDATE items SET label = 'good', status="complete" WHERE video_id = ?`, [video_id]);
-        const items = await db.all('SELECT * FROM items where status="incomplete"');
+        await Item.updateOne({ video_id }, { label: 'good', status: 'complete' });
+        const items = await Item.find({ status: 'incomplete' });
         return NextResponse.json({ message: items }, { status: 200 });
     } catch (e) {
         console.log(e);

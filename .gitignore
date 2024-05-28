@@ -43,3 +43,6 @@ image_classifier/*
 *.h5
 shiba_vit
 shiba_vit/*
+
+.env
+.env.local

@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getDatabase } from '../database';
+import Item from '../itemModel'; // Import the Mongoose model
 
 export async function POST(req: Request) {
     try {
-        const db = await getDatabase();
         const body = await req.json();
         const item = body;
         const {
@@ -14,8 +13,11 @@ export async function POST(req: Request) {
             channel,
             video_id
         } = item;
-        await db.run(`UPDATE items SET label = 'skip', status="complete" WHERE video_id = ?`, [video_id]);
-        const items = await db.all('SELECT * FROM items where status="incomplete"');
+
+        // Use Mongoose's findOneAndUpdate method
+        await Item.findOneAndUpdate({ video_id: video_id }, { label: 'skip', status: 'complete' });
+
+        const items = await Item.find({ status: "incomplete" }); // Use Mongoose's find method
         return NextResponse.json({ message: items }, { status: 200 });
     } catch (e) {
         console.log(e);

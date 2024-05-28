@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getDatabase } from '../database';
+import Item from '../itemModel';
 
 export async function GET(req: Request) {
     try {
-        const db = await getDatabase();
-        const items = await (db as any).all('SELECT * FROM items where status="incomplete"');
+        const items = await Item.find({ status: "incomplete" }); // Use Mongoose's find method
         return NextResponse.json({ message: items });
     } catch (e) {
         console.log("here")
