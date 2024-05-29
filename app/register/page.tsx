@@ -1,47 +1,145 @@
 'use client'
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import {useState, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 import {getDatabase} from '../api/database';
+import api from '../api/api';
 
-
+type User = {
+    _id: string;
+    username: string;
+    role: string;
+    isActive: boolean;
+};
 
 export default function Register() {
     const router = useRouter();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState('student');
-    const [db, setdb] = useState<any>(null);
+    const [username,
+        setUsername] = useState('');
+    const [password,
+        setPassword] = useState('');
+    const [role,
+        setRole] = useState('student');
+    const [db,
+        setdb] = useState < any > (null);
+    const [users,
+        setUsers] = useState < User[] > ([]);
+
     useEffect(() => {
-        if(!db){
-            getDatabase();
-            setdb(true);
-        }
+        const connectToDb = async() => {
+            if (!db) {
+                getDatabase();
+                setdb(true);
+            }
+        };
+        connectToDb();
     }, []);
-    const handleSubmit = async (event: any) => {
+    const handleSubmit = async(event : any) => {
         event.preventDefault();
-        const response = await axios.post('/api/register', { username, password, role });
+        const response = await api.post('/api/register', {username, password, role});
         if (response.status === 200) {
             // Redirect to the login page after successful registration
-            router.push('/login');
+            fetchUsers();
         } else {
             // Handle error here
             console.error('Registration failed');
         }
     };
 
+    const fetchUsers = async() => {
+        const response = await api.get('/api/users');
+        setUsers(response.data);
+    };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const handleToggleActive = async(userId : any) => {
+        const response = await api.post('/api/users/toggleActive', {userId});
+        if (response.status === 200) {
+            // Update the users state
+            setUsers(users.map(user => user._id === userId
+                ? {
+                    ...user,
+                    isActive: !user.isActive
+                }
+                : user));
+        }
+    };
+
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f0f0' }}>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '20px', borderRadius: '5px', boxShadow: '0px 0px 10px rgba(0,0,0,0.1)' }}>
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', color: 'black' }} />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', color: 'black' }} />
-                <select value={role} onChange={(e) => setRole(e.target.value)} style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ddd', color: 'black' }}>
-                    <option value="student">Student</option>
-                    <option value="admin">Admin</option>
-                    <option value="usurper">usurper</option>
-                </select>
-                <button type="submit" style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: 'none', background: '#0070f3', color: 'white', cursor: 'pointer' }}>Register</button>
-            </form>
+        <div
+            style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            background: '#282c34',
+            color: '#fff'
+        }}>
+            <table
+                style={{
+                borderCollapse: 'collapse',
+                width: '80%',
+                textAlign: 'center',
+                color: '#61dafb',
+                border: '2px solid #61dafb'
+            }}>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Active</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style={{ border: '1px solid #61dafb' }}>
+                        <td>
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Username"/>
+                        </td>
+                        <td>
+                            <select value={role} onChange={(e) => setRole(e.target.value)}>
+                                <option value="student">Student</option>
+                                <option value="admin">Admin</option>
+                                <option value="usurper">usurper</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Password"/>
+                        </td>
+                        <td>
+                            <button onClick={handleSubmit}>Register</button>
+                        </td>
+                    </tr>
+                    {users.map(user => (
+                        <tr  style={{ border: '1px solid #61dafb' }} key={user._id}>
+                            <td>{user.username}</td>
+                            <td>{user.role}</td>
+                            <td>{user.isActive
+                                    ? 'Active'
+                                    : 'Inactive'}</td>
+                            <td>
+                                {user.role !== 'usurper' && (
+                                    <button onClick={() => handleToggleActive(user._id)}>
+                                        {user.isActive
+                                            ? 'Deactivate'
+                                            : 'Activate'}
+                                    </button>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }

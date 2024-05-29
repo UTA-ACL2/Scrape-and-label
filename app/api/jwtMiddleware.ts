@@ -22,7 +22,7 @@ export async function authenticateToken(request : NextRequestWithUser) {
         }, {status: 401});
     };
 
-    const secret = process.env.JWT_SECRET;
+    const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
     if (!secret) {
         throw new Error('JWT_SECRET is not defined');
     };

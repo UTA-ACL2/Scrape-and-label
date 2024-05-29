@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-
+import checkToken from '../api/checkJWT';
 import {getDatabase} from '../api/database';
 
 export default function Login() {
@@ -11,10 +11,18 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [db, setdb] = useState<any>(null);
     useEffect(() => {
-        if(!db){
-            getDatabase();
-            setdb(true);
-        }
+        const connectToDb = async () => {
+            if (!db) {
+                await getDatabase();
+                setdb(true);
+            }
+        };
+        connectToDb();
+
+        const token = localStorage.getItem('token');
+        if (token && checkToken(token)) {
+            router.push('/');
+        };
     }, []);
     const handleSubmit = async (event:any) => {
         event.preventDefault();
