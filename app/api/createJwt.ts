@@ -1,4 +1,3 @@
-'use server'
 import jwt from 'jsonwebtoken';
 
 export async function generateToken(user: any) {
@@ -6,5 +5,6 @@ export async function generateToken(user: any) {
     if (!secret) {
         throw new Error('JWT_SECRET is not defined');
     }
-    return jwt.sign({ id: user._id }, secret, { expiresIn: '1d' });
+    let token = jwt.sign({ id: user._id }, secret, { expiresIn: '1d' });
+    return token
 }

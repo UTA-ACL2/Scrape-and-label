@@ -1,7 +1,5 @@
-'use server'
-import { clear } from 'console';
+"use server"
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import userSchema from './userModel';
 // Function to check if a token is valid
 export async function checkToken  (token:string) {
@@ -18,6 +16,7 @@ export async function checkToken  (token:string) {
     } catch (err) {
         if (err instanceof Error) {
             console.log(err.message);
+            return false;
         }
         // If the token is invalid, return false
         return false;
@@ -28,16 +27,23 @@ export default checkToken;
 
 
 
-export async function getUserFromToken(token: string) {
+export async function getUserFromToken(token: any) {
     const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
     if (!secret) {
         throw new Error('JWT_SECRET is not defined');
     }
-
     // Verify the token and get the user ID
     const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
     const userId = decoded.id;
 
     // Get the user record from the database
-    return userSchema.findById(userId);
+    let userDocument =  await userSchema.findById(userId).lean();
+    let user = null;
+    if (userDocument) {
+        user = {
+            username: userDocument.username,
+            role: userDocument.role
+        };
+    }
+    return user;
 }

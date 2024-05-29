@@ -15,11 +15,9 @@ export const getDatabase = async() => {
     
     if (!cached.promise) {
         const opts = {
-            bufferCommands: false,
+            bufferCommands: true,
             dbName: "Anivoice"
         };
-        mongoose.set('bufferCommands', true);
-        mongoose.set('bufferTimeoutMS', 1000);
         cached.promise = mongoose
             .connect(MONGODB_URI, opts)
             .then((mongoose) => {

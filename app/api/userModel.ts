@@ -1,3 +1,4 @@
+"use server";
 import mongoose, { Document, Model, models } from 'mongoose';
 import bcrypt from 'bcryptjs';
 

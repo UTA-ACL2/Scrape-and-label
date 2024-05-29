@@ -4,10 +4,10 @@ import axios from 'axios';
 import {useRouter} from 'next/navigation';
 import {checkToken, getUserFromToken} from '../api/checkJWT';
 import {getDatabase} from '../api/database';
-import {useStore} from '../store';
+import useStore from '../store';
 
 export default function Login() {
-    const setUser = useStore((state) => state.setUser);
+    const login = useStore((state) => state.login);
 
     const router = useRouter();
     const [username,
@@ -18,16 +18,7 @@ export default function Login() {
         setdb] = useState < any > (null);
 
     const setUserFromToken = async(token : string) => {
-        const userDocument = await getUserFromToken(token);
-        if (userDocument) {
-            // Create a user object with only the fields you need
-            const user = {
-                username: userDocument.username,
-                role: userDocument.role
-            };
-
-            setUser(user); // Update this line
-        }
+        login(token);
     }
     useEffect(() => {
         const fetchData = async () => {
@@ -41,7 +32,7 @@ export default function Login() {
 
             const token = localStorage.getItem('token');
             if (token && await checkToken(token)) {
-                setUserFromToken(token);
+                await setUserFromToken(token);
                 router.push('/');
             }
         };
@@ -54,7 +45,7 @@ export default function Login() {
         const token = response.data.token;
         localStorage.setItem('token', token);
         // Redirect to the home page
-        setUserFromToken(token);
+        await setUserFromToken(token);
         router.push('/');
     };
 
