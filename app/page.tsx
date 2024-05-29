@@ -6,16 +6,32 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import api from './api/api';
 import { useRouter } from 'next/navigation';
+import {checkToken} from './api/checkJWT';
+import {getDatabase} from './api/database';
 
 export default function Home() {
     const router =  useRouter();
-
+    const [db,
+        setdb] = useState < any > (null);
     // Use router inside useEffect to ensure it's not being used in server-side rendering
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login');
+        const fetchData = async () => {
+            const connectToDb = async () => {
+                if (!db) {
+                    await getDatabase();
+                    setdb(true);
+                }
+            };
+            connectToDb();
+
+            const token = localStorage.getItem('token');
+            if (token && await checkToken(token)) {
+                router.push('/');
+            }
         };
+
+        fetchData();
+
     }, []);
     const checkTokenAndCallApi = async (apiFunction:any, ...params:any) => {
         const token = localStorage.getItem('token');

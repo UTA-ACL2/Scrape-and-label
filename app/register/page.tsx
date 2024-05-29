@@ -3,6 +3,7 @@ import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {getDatabase} from '../api/database';
 import api from '../api/api';
+import {checkToken, getUserFromToken} from '../api/checkJWT';
 
 type User = {
     _id: string;
@@ -30,6 +31,10 @@ export default function Register() {
                 getDatabase();
                 setdb(true);
             }
+            const token = localStorage.getItem('token');
+            if (!token || !(await checkToken(token))) {
+                router.push('/login');
+            };
         };
         connectToDb();
     }, []);

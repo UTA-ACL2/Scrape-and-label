@@ -27,7 +27,8 @@
     "react-lite-youtube-embed": "^2.4.0",
     "react-player": "^2.16.0",
     "sqlite3": "^5.1.7",
-    "youtubei": "^1.4.0"
+    "youtubei": "^1.4.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
