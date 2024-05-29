@@ -27,6 +27,7 @@
     "react-dom": "^18",
     "react-lite-youtube-embed": "^2.4.0",
     "react-player": "^2.16.0",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "styled-components": "^6.1.11",
     "youtubei": "^1.4.0",

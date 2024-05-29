@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import useStore from '../store';
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 const Nav = styled.nav `
   background-color: #333;
@@ -25,58 +26,66 @@ const WelcomeMessage = styled.a `
 `;
 
 const Navbar = () => {
+    const router = useRouter()
     const getUser = useStore(state => state.getUser);
-    const loggedin = useStore(state => state.isLoggedIn);
     const logout = useStore((state) => state.logout);
-    const [user, setuser] = useState({username: '', role: ''});
+    const [user, setuser] = useState({username: '', access: false});
+    let loggedinRef = useRef(useStore.getState().isLoggedIn)
+
+    // ...
+    const [isLoading, setIsLoading] = useState(true); // Add this line
+
+    const fetchUser = async () => {
+      setIsLoading(true); // Add this line
+      let fetched_user = await useStore.getState().getUser();
+      if(!fetched_user){
+        return; 
+      }
+      setuser({username: fetched_user?.username||"", access: fetched_user?.access||false});
+      setIsLoading(false); // Add this line
+  }
 
     useEffect(() => {
-        if(user.username === '') {
-        const fetchUser = async () => {
-            let fetched_user = await getUser();
-            setuser({username: fetched_user?.username||"", role: fetched_user?.role||""});
-        };
-        fetchUser();
+      (async () => {
+        await fetchUser();
+      })();
+    }, [loggedinRef.current]);
+
+    if (isLoading) {
+        return <div>Loading...</div>; // Or replace this with a loading spinner
     }
-    }, [loggedin]);
+
     const handleLogout = () => {
+      console.log("here")
         // Clear the user data from the global state
         logout(); // Update the argument to be of type 'User' instead of 'string'
-        // Clear the token from local storage
-        // Redirect to the login page or do other cleanup tasks
+        router.push('/login')
     };
     // localStorage.removeItem('token');
   
 return (
   <div>
-    {!user || user.username === '' ? (
-      <div>Loading...</div>
-    ) : (
-      <>
+
+    {loggedinRef.current && user && user.username !== '' &&
         <Nav>
-          {user && (
-            <>
-              {loggedin && (
+              {loggedinRef.current && (
                 <>
                   <WelcomeMessage>
                     Welcome, <span style={{ color: 'red' }}>{user?.username}</span>
                   </WelcomeMessage>
-                  <Link href="/" passHref>
-                    Home
-                  </Link>
+                    <Link href="/" passHref>
+                      AniVoice
+                    </Link>
                 </>
               )}
-              {user && !loggedin && (user.role === 'usurper' || user.role === 'admin') && (
+              {user && (user.access) && (
                 <Link href="/register" passHref>
                   Register
                 </Link>
               )}
-              {loggedin && <NavLink onClick={handleLogout}>Logout</NavLink>}
-            </>
-          )}
+              {loggedinRef.current && <NavLink onClick={handleLogout}>Logout</NavLink>}
         </Nav>
-      </>
-    )}
+    }
   </div>
 );
 };

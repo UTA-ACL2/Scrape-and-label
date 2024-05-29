@@ -6,8 +6,8 @@ import {getUserFromToken} from '../api/checkJWT';
 import {getDatabase} from '../api/database';
 
 type User = {
-    username: string;
-    role: 'admin' | 'student' | 'usurper';
+    username: string  | undefined;
+    access: boolean | undefined;
 };
 
 interface State {
@@ -22,7 +22,8 @@ interface State {
 const getUser = async(token : string) => {
     await getDatabase();
     const user = await getUserFromToken(token);
-    return user;
+    let access = user?.role == ("admin"|| "usurper") ? true : false;
+    return {username: user?.username, access:access};
 }
 
 const useStore = create(persist < State > ((set) => ({
@@ -44,7 +45,7 @@ const useStore = create(persist < State > ((set) => ({
     logout: () => {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
-            set({token: null, isLoggedIn: false});
+            set({token: null, isLoggedIn: false, user: null});
         }
     },
     getUser: async function (): Promise < User | null > {
