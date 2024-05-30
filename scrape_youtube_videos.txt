@@ -1,6 +1,6 @@
 import { Client } from "youtubei";
 import fs from 'fs';
-import {scrape} from "./scrape";
+import {scrape} from "./app/api/scrape";
 interface VideoItem {
     title: string;
     thumbnails: any[];
@@ -16,7 +16,7 @@ interface VideoItem {
 
 const start_scraping = async () =>{
     const youtube = new Client({
-        initialCookie:"fq7iz3OUlpIQUfEq/A9IQEGxkBcIyLNj8m"
+        initialCookie:""
     });
     let videos_count = 4000; // Number of videos you want to scrape from the search result.
     

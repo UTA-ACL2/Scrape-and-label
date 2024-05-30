@@ -15,7 +15,7 @@ export const getDatabase = async() => {
     }
     if (!cached.promise) {
         const opts = {
-            bufferCommands: false,
+            bufferCommands: true,
             dbName: "Anivoice",
             serverSelectionTimeoutMS: 5000, // Timeout after 5s of inactivity
             socketTimeoutMS: 45000, // Close sockets after 45s of inactivity

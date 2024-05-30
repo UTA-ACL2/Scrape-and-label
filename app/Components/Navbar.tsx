@@ -13,22 +13,22 @@ const Navbar = () => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
 
-  const connectToDatabase = async () => {
-    try {
-        let response = await fetch('/api/connect');
-        return true;
-    } catch (error) {
-      return error;
-    }
-  };
+  // const connectToDatabase = async () => {
+  //   try {
+  //       let response = await fetch('/api/connect');
+  //       return true;
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // };
 
-  useEffect(() => {
-    const connect = async () => {
-      await connectToDatabase();
-    };
-    connect();
+  // useEffect(() => {
+  //   const connect = async () => {
+  //     await connectToDatabase();
+  //   };
+  //   connect();
 
-  }, [])
+  // }, [])
 
   useEffect(() => {
     const connect = async () => {

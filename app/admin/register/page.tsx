@@ -3,7 +3,6 @@ import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {getDatabase} from '../../../database/database';
 import api from '../../api/api';
-import {checkToken, getUserFromToken} from '../../api/checkJWT';
 
 type User = {
     _id: string;
@@ -24,21 +23,21 @@ export default function Register() {
         setdb] = useState < any > (null);
     const [users,
     setUsers] = useState < User[] > ([]);
-    const connectToDatabase = async() => {
-        try {
-            let response = await fetch('/api/connect');
-            return true;
-        } catch (error) {
-            return error;
-        }
-    };
+    // const connectToDatabase = async() => {
+    //     try {
+    //         let response = await fetch('/api/connect');
+    //         return true;
+    //     } catch (error) {
+    //         return error;
+    //     }
+    // };
 
-    useEffect(() => {
-        const connect = async() => {
-            await connectToDatabase();
-        };
-        connect();
-    }, [])
+    // useEffect(() => {
+    //     const connect = async() => {
+    //         await connectToDatabase();
+    //     };
+    //     connect();
+    // }, [])
 
     const handleSubmit = async(event : any) => {
         event.preventDefault();

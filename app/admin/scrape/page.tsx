@@ -58,14 +58,14 @@ export default function Register() {
         };
     };
     
-    const connectToDatabase = async() => {
-        try {
-            let response = await fetch('/api/connect');
-            return true;
-        } catch (error) {
-            return error;
-        }
-    };
+    // const connectToDatabase = async() => {
+    //     try {
+    //         let response = await fetch('/api/connect');
+    //         return true;
+    //     } catch (error) {
+    //         return error;
+    //     }
+    // };
 
 
 
@@ -87,10 +87,10 @@ export default function Register() {
     }, [session]);
 
     useEffect(() => {
-        const connect = async() => {
-            await connectToDatabase();
-        };
-        connect();
+        // const connect = async() => {
+        //     await connectToDatabase();
+        // };
+        // connect();
         if (keywords
             ?.length === 0) {
             const fetchKeywords = async() => {
@@ -178,7 +178,7 @@ export default function Register() {
 
     const handleScrape = async() =>{
         let keyword = dropDown;
-        const response = await api.post('/api/admin/scrape', { keyword, userId:session?.user.id });
+        const response = await api.post('/api/admin/scrape', { keyword, userId:session?.user.id ,Cookie});
         if (response.status === 200) {
             console.log('Scraping started');
         } else {
