@@ -18,8 +18,8 @@ export default function Home() {
     const loading = status === 'loading';
 
     useEffect(() => {
-        if (!loading && !session) {
-            console.log(session)
+        if (!loading && session) {
+            console.log(session);
         if (youtubeJsonData
             ?.length > 0) {
             return;

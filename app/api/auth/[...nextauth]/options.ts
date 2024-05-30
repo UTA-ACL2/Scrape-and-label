@@ -1,24 +1,32 @@
 //src/server/auth.ts
 
-import {getServerSession, type NextAuthOptions, type User} from "next-auth";
+import {getServerSession, type NextAuthOptions, type User as NextAuthUser} from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import {userService} from "../../../../auth/userService";
+// Extend the User type to include a role property
+// Extend the User type to include a role property
+type User = NextAuthUser & { role?: string, type?: string, providerAccountId?: string };
+// Extend the session.user type to include a role property
+type SessionUser = { id: string; name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; role?: string };
 
 export const authOptions : NextAuthOptions = {
     session: {
         strategy: "jwt"
     },
     callbacks: {
-        async jwt({token, account, profile}) {
-            if (account && account.type === "credentials") {
-                token.userId = account.providerAccountId;
-            }
+        async jwt({ token, user }) {
+            const Exteduser: User = user;
+            if (Exteduser) token.role = Exteduser.role as any;
             return token;
         },
-        async session({session, token, user}) {
-            session.user.id = token.userId;
+        async session({ session, token }) {
+            if (session?.user) {
+                const user: SessionUser = session.user;
+                user.role = token.role as any;
+                user.id = token.sub as any;
+            }
             return session;
-        }
+        },
     },
     pages: {
         signIn: '/login'
