@@ -1,4 +1,3 @@
-"use server"
 import mongoose from "mongoose";
 const MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI;
 if (!MONGODB_URI) {
@@ -10,11 +9,12 @@ let cached = (global as any).mongoose || {
     promise: null
 };
 export const getDatabase = async() => {
-    if (cached.conn) 
+    if (cached.conn) {
         return cached.conn;
+    }
     if (!cached.promise) {
         const opts = {
-            bufferCommands: true,
+            bufferCommands: false,
             dbName: "Anivoice"
         };
         cached.promise = mongoose
@@ -24,4 +24,5 @@ export const getDatabase = async() => {
             });
     }
     cached.conn = await cached.promise;
+    return cached.conn;
 };

@@ -5,6 +5,7 @@ import LoginButton from '../login/login-btn';
 import { useRouter,usePathname } from "next/navigation";
 import Link from 'next/link';
 
+
 const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
@@ -37,7 +38,7 @@ const Navbar = () => {
         <span className="text-lg font-bold">AniVoice</span>
       </Link>
     {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
-      <Link href="/register">
+      <Link href="/admin/register">
         <span className="text-lg">Add Accounts</span>
       </Link>
     ) : null}
