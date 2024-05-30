@@ -8,13 +8,17 @@ interface IUser {
     role: 'admin' | 'student' | 'usurper';
     isActive: boolean;
     createdAt: Date;
+    youtubeCookie: string;
 }
 
 interface IUserDocument extends IUser, Document {
     validatePassword: (password: string) => boolean;
 }
 const userSchema = new mongoose.Schema<IUserDocument>({
-    username: String,
+    username: {
+        type: String,
+        unique: true,
+    },
     password: String,
     role: {
         type: String,
@@ -28,7 +32,8 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    youtubeCookie: String,
 });
 
 userSchema.methods.validatePassword = function(password: string) {

@@ -12,10 +12,22 @@ const Navbar = () => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
 
+  const connectToDatabase = async () => {
+    fetch('/api/connect')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+  };
   useEffect(() => {
-    if (!loading && !session) {
-      router.push("/login");
-    }
+    const connect = async () => {
+      if (!loading && !session) {
+          router.push("/login");
+      } else {
+          await connectToDatabase();
+      }
+  };
+
+    connect();
   }, [session, loading]);
 
   if (pathname === '/login' || loading) {
@@ -31,9 +43,13 @@ const Navbar = () => {
 
   return (
     <div>
-     {session && (
+    {session && (
   <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
-    <div className="text-lg">Welcome {session.user?.name || ""}</div>
+  <div className="flex items-center space-x-2">
+    <span className="text-lg font-bold ">Welcome,</span>
+    <span className="text-lg font-bold text-gray-900">{session.user?.name || ""}</span>
+    <span className="text-sm font-light text-white-500">({session.user?.role})</span>
+  </div>
     <Link href="/">
         <span className="text-lg font-bold">AniVoice</span>
       </Link>

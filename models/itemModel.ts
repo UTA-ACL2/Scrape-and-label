@@ -1,6 +1,6 @@
 "use server";
 
-import mongoose, {  models } from 'mongoose';
+import mongoose from 'mongoose';
 
 const itemSchema = new mongoose.Schema({
     title: String,
@@ -9,6 +9,7 @@ const itemSchema = new mongoose.Schema({
     viewCount: String,
     channel: String,
     video_id: String,
+    keyword: String,
     status: {
         type: String,
         default: 'incomplete'
@@ -16,9 +17,22 @@ const itemSchema = new mongoose.Schema({
     label: {
         type: String,
         default: 'none'
-    }
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    labeledBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    exclude: {
+        type: Boolean,
+        default: false
+    },
 });
 
+itemSchema.index({ video_id: 1, keyword: 1 }, { unique: true });
 
-const Item= mongoose.models.Item || mongoose.model('Item', itemSchema);
+const Item = mongoose.models.Item || mongoose.model('Item', itemSchema);
 export default Item;
