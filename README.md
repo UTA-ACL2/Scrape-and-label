@@ -1,4 +1,6 @@
 # Note
+### Documentation is outdate because i am changing the website. Do not refer to this
+
 
 - If you are running this for the first time, run `npm run ci` or `npm run i`
 - Also install nodejs and typescript in your machine
