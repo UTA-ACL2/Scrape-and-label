@@ -1,6 +1,7 @@
 "use server";
 
 import mongoose from 'mongoose';
+const { ObjectId } = mongoose.Schema.Types;
 
 const itemSchema = new mongoose.Schema({
     title: String,
@@ -9,7 +10,10 @@ const itemSchema = new mongoose.Schema({
     viewCount: String,
     channel: String,
     video_id: String,
-    keyword: String,
+    keyword: {
+        type: ObjectId,
+        ref: 'Keyword',
+    },
     status: {
         type: String,
         default: 'incomplete'

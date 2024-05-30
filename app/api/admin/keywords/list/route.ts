@@ -1,7 +1,6 @@
 'use server'
 import { NextRequest, NextResponse } from 'next/server';
 import keyword from '@/models/keywordModel';
-import keywordGroupModel from '@/models/keywordGroupModel';
 
 export async function GET(request: NextRequest) {
     const allItems = await keyword.find({}).populate('superset');

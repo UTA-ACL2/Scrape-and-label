@@ -58,6 +58,16 @@ export default function Register() {
         };
     };
     
+    const connectToDatabase = async() => {
+        try {
+            let response = await fetch('/api/connect');
+            return true;
+        } catch (error) {
+            return error;
+        }
+    };
+
+
 
     useEffect(() => {
         const fetchCookie = async () => {
@@ -77,6 +87,10 @@ export default function Register() {
     }, [session]);
 
     useEffect(() => {
+        const connect = async() => {
+            await connectToDatabase();
+        };
+        connect();
         if (keywords
             ?.length === 0) {
             const fetchKeywords = async() => {
@@ -147,7 +161,7 @@ export default function Register() {
         }
     };
 
-    const handleKeywordChange = async(selectedKeyword : string) => {
+    const handleKeywordChange = async(selectedKeyword : any) => {
         setdropDown(selectedKeyword);
         const response = await api.get(`/api/admin/keywords?keyword=${selectedKeyword}`);
         setItems(response.data);
@@ -161,6 +175,17 @@ export default function Register() {
     const handleGroupType = (e : any) => {
         setkeywordSuperset(e.target.value)
     }
+
+    const handleScrape = async() =>{
+        let keyword = dropDown;
+        const response = await api.post('/api/admin/scrape', { keyword, userId:session?.user.id });
+        if (response.status === 200) {
+            console.log('Scraping started');
+        } else {
+            console.error('Failed to start scraping');
+        }
+    }
+
     return (
         <div
             className="flex flex-col items-center justify-center h-screen bg-gray-800 text-white">
@@ -224,7 +249,11 @@ export default function Register() {
                         options={keywords}
                         onChange={(selectedOption) => handleKeywordChange(selectedOption)}/>
                 </div>
-                <div className='flex flex-col items-center justify-center'>
+                <div className='flex flex-row items-center justify-center space-x-4'>
+                <button
+                        disabled={dropDown == "Select"}
+                        onClick={() => handleScrape()}
+                        className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-orange-600">Scrape Keyword</button>
                     <button
                         disabled={dropDown == "Select"}
                         onClick={() => removeKeyword()}
