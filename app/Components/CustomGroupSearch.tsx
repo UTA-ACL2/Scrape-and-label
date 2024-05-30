@@ -5,7 +5,7 @@ interface CustomSelectProps {
     onChange : (selectedOption : string) => void;
 }
 
-function CustomSelect({options, onChange} : CustomSelectProps) {
+function CustomGroupSearch({options, onChange} : CustomSelectProps) {
     const [selectedOption,
         setSelectedOption] = useState('');
 
@@ -19,12 +19,12 @@ function CustomSelect({options, onChange} : CustomSelectProps) {
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-emerald-700">
             {options.map((option, index) => (
-                <option key={option.id} value={option.name}>
-                    {option.name} {option.superset ? `(${option.superset})` : ""}
+                <option key={option.id} value={option.id}>
+                    {option.name}
                 </option>
             ))}
         </select>
     );
 }
 
-export default CustomSelect;
+export default CustomGroupSearch;

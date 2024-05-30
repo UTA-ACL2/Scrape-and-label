@@ -30,6 +30,10 @@ const itemSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
 });
 
 itemSchema.index({ video_id: 1, keyword: 1 }, { unique: true });

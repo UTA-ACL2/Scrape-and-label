@@ -3,10 +3,8 @@ import {useEffect, useState, useRef} from 'react';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import api from './api/api';
-import { useSession, signIn, signOut } from "next-auth/react";
-import { useRouter,usePathname } from "next/navigation";
-
-
+import {useSession, signIn, signOut} from "next-auth/react";
+import {useRouter, usePathname} from "next/navigation";
 
 
 // authentication
@@ -14,18 +12,35 @@ import { useRouter,usePathname } from "next/navigation";
 export default function Home() {
     const pathname = usePathname();
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const {data: session, status} = useSession();
     const loading = status === 'loading';
+
+    const connectToDatabase = async() => {
+        try {
+            let response = await fetch('/api/connect');
+            return true;
+        } catch (error) {
+            return error;
+        }
+    };
+
+    useEffect(() => {
+        const connect = async() => {
+            await connectToDatabase();
+        };
+        connect();
+
+    }, [])
 
     useEffect(() => {
         if (!loading && session) {
             console.log(session);
-        if (youtubeJsonData
-            ?.length > 0) {
-            return;
-        };
-        fetchYoutubeData();
-    }
+            if (youtubeJsonData
+                ?.length > 0) {
+                return;
+            };
+            fetchYoutubeData();
+        }
     }, [session, loading]);
 
     const [youtubeJsonData,

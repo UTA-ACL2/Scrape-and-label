@@ -16,7 +16,9 @@ type PageProps = {
 export default function LoginPage({searchParams} : PageProps) {
     const [inputs,
         setInputs] = useState < LoginInput > ({username: "", password: ""});
-
+    const [isLoading,
+        setIsLoading] = useState(false); 
+        
     const handleChange = (event : ChangeEvent < HTMLInputElement >) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -28,14 +30,18 @@ export default function LoginPage({searchParams} : PageProps) {
 
     const handleSubmit = async(event : FormEvent) => {
         event.preventDefault();
+        setIsLoading(true); // Set isLoading to true when the request starts
         await signIn("credentials", {
             username: inputs.username,
             password: inputs.password,
             redirect:true,
             callbackUrl: '/'
         });
+        setIsLoading(false); // Set isLoading to false when the request ends
     }
-    return ( <> <div
+
+    return ( 
+    <> <div
         className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form className="space-y-6" onSubmit={handleSubmit}>
@@ -80,10 +86,11 @@ export default function LoginPage({searchParams} : PageProps) {
                 </div>
 
                 <div>
-                    <button
+                <button
                         type="submit"
-                        className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                        Sign in
+                        disabled={isLoading} // Disable the button based on isLoading
+                        className={`flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        {isLoading ? 'Signing in...' : 'Sign in'}
                     </button>
                 </div>
                 {searchParams.error && (

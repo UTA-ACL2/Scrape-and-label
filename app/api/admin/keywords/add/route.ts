@@ -4,12 +4,12 @@ import keywords from '@/models/keywordModel';
 export async function POST(request: NextRequest) {
     try{
     const body = await request.json();
-    const {keyword} = body;
+    const {keyword, keywordGroupId} = body;
     if (!keyword) {
         return NextResponse.json({ message: 'Keyword to add is not provided' });
     }
 
-    const newKeyword = new keywords({ keyword: keyword });
+    const newKeyword = new keywords({ keyword: keyword, superset: keywordGroupId});
     await newKeyword.save();
 
     return NextResponse.json({ message: 'Keyword added successfully' });

@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema<IUserDocument>({
         unique: true,
     },
     password: String,
+    youtubeCookie: String,
     role: {
         type: String,
         enum: ['admin', 'student', 'usurper'],
@@ -33,7 +34,6 @@ const userSchema = new mongoose.Schema<IUserDocument>({
         type: Date,
         default: Date.now
     },
-    youtubeCookie: String,
 });
 
 userSchema.methods.validatePassword = function(password: string) {
