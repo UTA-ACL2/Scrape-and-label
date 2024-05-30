@@ -4,6 +4,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import LoginButton from '../login/login-btn';
 import { useRouter,usePathname } from "next/navigation";
 import Link from 'next/link';
+import path from "path";
 
 
 const Navbar = () => {
@@ -12,37 +13,47 @@ const Navbar = () => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
 
+  const [dbStarted, setdbStarted] = useState(false);
   const connectToDatabase = async () => {
-    fetch('/api/connect')
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
+    try {
+        let response = await fetch('/api/connect');
+        return true;
+    } catch (error) {
+      return error;
+    }
   };
   useEffect(() => {
     const connect = async () => {
       if (!loading && !session) {
           router.push("/login");
-      } else {
-          await connectToDatabase();
       }
   };
-
     connect();
   }, [session, loading]);
+  useEffect(() => {
+    const connect = async () => {
+      await connectToDatabase();
+      setdbStarted(true);
+    };
+    connect();
 
-  if (pathname === '/login' || loading) {
-    return (
-      <div
-        className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
-        <div className='ml-1'>AniVoice</div>
-        <div>Login Page</div>
-        <div></div>
-      </div>
-    );
-  }
+  }, [])
+  
+
 
   return (
+
     <div>
+
+    {(pathname === '/login' || loading) && (
+       <div
+       className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
+       <div className='ml-1'>AniVoice</div>
+       <div>Login Page</div>
+       <div></div>
+     </div>
+    )}
+
     {session && (
   <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
   <div className="flex items-center space-x-2">
@@ -54,9 +65,14 @@ const Navbar = () => {
         <span className="text-lg font-bold">AniVoice</span>
       </Link>
     {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
+      <>
       <Link href="/admin/register">
         <span className="text-lg">Add Accounts</span>
       </Link>
+        <Link href="/admin/scrape">
+        <span className="text-lg">Scrape</span>
+      </Link>
+      </>
     ) : null}
     <div>
       <LoginButton session={session} loading={loading}/>
@@ -64,6 +80,7 @@ const Navbar = () => {
   </div>
 )}
     </div>
+
   );
 };
 

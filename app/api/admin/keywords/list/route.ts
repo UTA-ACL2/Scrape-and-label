@@ -9,6 +9,5 @@ export async function GET(request: NextRequest) {
         "id": index + 1,
         "name": item.keyword
     }));
-    console.log(formattedItems)
-    return NextResponse.json(formattedItems);
+     return NextResponse.json(formattedItems);
 }

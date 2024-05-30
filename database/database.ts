@@ -8,21 +8,33 @@ let cached = (global as any).mongoose || {
     conn: null,
     promise: null
 };
+
+const connection:{isConnected?:number} = {};
 export const getDatabase = async() => {
-    if (cached.conn) {
-        return cached.conn;
+    if(connection.isConnected){
+        return;
     }
-    if (!cached.promise) {
-        const opts = {
-            bufferCommands: false,
-            dbName: "Anivoice"
-        };
-        cached.promise = mongoose
-            .connect(MONGODB_URI, opts)
-            .then((mongoose) => {
-                console.log("db started")
-            });
-    }
-    cached.conn = await cached.promise;
-    return cached.conn;
-};
+    const db = await mongoose.connect(MONGODB_URI!);
+    connection.isConnected = db.connections[0].readyState;
+    console.log("db started")
+}
+
+
+// export const getDatabase = async() => {
+//     if (cached.conn) {
+//         return cached.conn;
+//     }
+//     if (!cached.promise) {
+//         const opts = {
+//             bufferCommands: false,
+//             dbName: "Anivoice"
+//         };
+//         cached.promise = mongoose
+//             .connect(MONGODB_URI, opts)
+//             .then((mongoose) => {
+//                 console.log("db started")
+//             });
+//     }
+//     cached.conn = await cached.promise;
+//     return cached.conn;
+// };
