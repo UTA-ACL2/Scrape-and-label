@@ -7,7 +7,6 @@ import {userService} from "../../../../auth/userService";
 // Extend the User type to include a role property
 type User = NextAuthUser & { role?: string, type?: string, providerAccountId?: string };
 // Extend the session.user type to include a role property
-type SessionUser = { id: string; name?: string | null | undefined; email?: string | null | undefined; image?: string | null | undefined; role?: string };
 
 export const authOptions : NextAuthOptions = {
     session: {
@@ -21,7 +20,7 @@ export const authOptions : NextAuthOptions = {
         },
         async session({ session, token }) {
             if (session?.user) {
-                const user: SessionUser = session.user;
+                const user = session.user;
                 user.role = token.role as any;
                 user.id = token.sub as any;
             }

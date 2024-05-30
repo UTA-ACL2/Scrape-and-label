@@ -3,7 +3,7 @@ import userSchema from '../../models/userModel';
 // Function to check if a token is valid
 export async function checkToken  (token:string) {
     try {
-        const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
+        const secret = process.env.NEXTAUTH_SECRET;
         if (!secret) {
             throw new Error('JWT_SECRET is not defined');
         }
@@ -27,7 +27,7 @@ export default checkToken;
 
 
 export async function getUserFromToken(token: any) {
-    const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
+    const secret = process.env.NEXTAUTH_SECRET;
     if (!secret) {
         throw new Error('JWT_SECRET is not defined');
     }

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import LoginButton from '../login/login-btn';
 import { useRouter,usePathname } from "next/navigation";
+import Link from 'next/link';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -29,15 +30,22 @@ const Navbar = () => {
 
   return (
     <div>
-      {session && (
-        <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
-          <div className="text-lg">Welcome {session.user?.name || ""}</div>
-          <div className="text-xl font-bold">AniVoice</div>
-          <div>
-            <LoginButton session={session} loading={loading}/>
-          </div>
-        </div>
-      )}
+     {session && (
+  <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
+    <div className="text-lg">Welcome {session.user?.name || ""}</div>
+    <Link href="/">
+        <span className="text-lg font-bold">AniVoice</span>
+      </Link>
+    {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
+      <Link href="/register">
+        <span className="text-lg">Add Accounts</span>
+      </Link>
+    ) : null}
+    <div>
+      <LoginButton session={session} loading={loading}/>
+    </div>
+  </div>
+)}
     </div>
   );
 };
