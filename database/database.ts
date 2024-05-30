@@ -12,7 +12,6 @@ let cached = (global as any).mongoose || {
 export const getDatabase = async() => {
     if (cached.conn) 
         return cached.conn;
-    
     if (!cached.promise) {
         const opts = {
             bufferCommands: true,

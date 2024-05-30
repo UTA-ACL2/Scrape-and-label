@@ -1,7 +1,7 @@
 'use client'
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {getDatabase} from '../api/database';
+import {getDatabase} from '../../database/database';
 import api from '../api/api';
 import {checkToken, getUserFromToken} from '../api/checkJWT';
 
@@ -25,19 +25,7 @@ export default function Register() {
     const [users,
         setUsers] = useState < User[] > ([]);
 
-    useEffect(() => {
-        const connectToDb = async() => {
-            if (!db) {
-                getDatabase();
-                setdb(true);
-            }
-            const token = localStorage.getItem('token');
-            if (!token || !(await checkToken(token))) {
-                router.push('/login');
-            };
-        };
-        connectToDb();
-    }, []);
+
     const handleSubmit = async(event : any) => {
         event.preventDefault();
         const response = await api.post('/api/register', {username, password, role});

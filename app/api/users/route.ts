@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import User from '../userModel';
+import User from '../../../models/userModel';
 import { authenticateToken } from '../jwtMiddleware';
 
 export async function GET(request: NextRequest) {

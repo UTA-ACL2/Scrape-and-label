@@ -1,6 +1,5 @@
-"use server"
 import jwt from 'jsonwebtoken';
-import userSchema from './userModel';
+import userSchema from '../../models/userModel';
 // Function to check if a token is valid
 export async function checkToken  (token:string) {
     try {

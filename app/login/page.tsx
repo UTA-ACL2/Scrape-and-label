@@ -1,109 +1,99 @@
-'use client'
-import {useState, useEffect} from 'react';
-import axios from 'axios';
-import {useRouter} from 'next/navigation';
-import {checkToken, getUserFromToken} from '../api/checkJWT';
-import {getDatabase} from '../api/database';
-import useStore from '../store';
+"use client";
+import {signIn} from "next-auth/react";
+import {ChangeEvent, FormEvent, useState} from "react";
 
-export default function Login() {
-    const login = useStore((state) => state.login);
+type LoginInput = {
+    username: string;
+    password: string;
+}
 
-    const router = useRouter();
-    const [username,
-        setUsername] = useState('');
-    const [password,
-        setPassword] = useState('');
-    const [db,
-        setdb] = useState < any > (null);
-
-    const setUserFromToken = async(token : string) => {
-        login(token);
+type PageProps = {
+    searchParams: {
+        error?: string
     }
-    useEffect(() => {
-        const fetchData = async () => {
-            const connectToDb = async () => {
-                if (!db) {
-                    await getDatabase();
-                    setdb(true);
-                }
-            };
-            await connectToDb();
+}
 
-            const token = localStorage.getItem('token');
-            if (token && await checkToken(token)) {
-                await setUserFromToken(token);
-                router.push('/');
-            }
-        };
+export default function LoginPage({searchParams} : PageProps) {
+    const [inputs,
+        setInputs] = useState < LoginInput > ({username: "", password: ""});
 
-        fetchData();
-    }, []);
-    const handleSubmit = async(event : any) => {
+    const handleChange = (event : ChangeEvent < HTMLInputElement >) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setInputs(values => ({
+            ...values,
+            [name]: value
+        }))
+    }
+
+    const handleSubmit = async(event : FormEvent) => {
         event.preventDefault();
-        const response = await axios.post('/api/login', {username, password});
-        const token = response.data.token;
-        localStorage.setItem('token', token);
-        // Redirect to the home page
-        await setUserFromToken(token);
-        router.push('/');
-    };
+        await signIn("credentials", {
+            username: inputs.username,
+            password: inputs.password,
+            redirect:true,
+            callbackUrl: '/'
+        });
+    }
+    return ( <> <div
+        className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <form className="space-y-6" onSubmit={handleSubmit}>
+                <div>
+                    <label
+                        htmlFor="username"
+                        className="block text-sm font-medium leading-6 text-gray-900">
+                        Username
+                    </label>
+                    <div className="mt-2">
+                        <input
+                            id="username"
+                            name="username"
+                            type="text"
+                            autoComplete="on"
+                            required
+                            value={inputs.username || ""}
+                            onChange={handleChange}
+                            className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                    </div>
+                </div>
 
-    return (
-        <div
-            style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            background: '#f0f0f0'
-        }}>
-            <form
-                onSubmit={handleSubmit}
-                style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '20px',
-                padding: '20px',
-                borderRadius: '5px',
-                boxShadow: '0px 0px 10px rgba(0,0,0,0.1)'
-            }}>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                    style={{
-                    padding: '10px',
-                    fontSize: '16px',
-                    borderRadius: '5px',
-                    border: '1px solid #ddd',
-                    color: 'black'
-                }}/>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    style={{
-                    padding: '10px',
-                    fontSize: '16px',
-                    borderRadius: '5px',
-                    border: '1px solid #ddd',
-                    color: 'black'
-                }}/>
-                <button
-                    type="submit"
-                    style={{
-                    padding: '10px',
-                    fontSize: '16px',
-                    borderRadius: '5px',
-                    border: 'none',
-                    background: '#0070f3',
-                    color: 'white',
-                    cursor: 'pointer'
-                }}>Login</button>
+                <div>
+                    <div className="flex items-center justify-between">
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium leading-6 text-gray-900">
+                            Password
+                        </label>
+                    </div>
+                    <div className="mt-2">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autoComplete="on"
+                            required
+                            value={inputs.password || ""}
+                            onChange={handleChange}
+                            className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                    </div>
+                </div>
+
+                <div>
+                    <button
+                        type="submit"
+                        className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Sign in
+                    </button>
+                </div>
+                {searchParams.error && (
+                    <p className="text-red-600 text-center capitalize">
+                        Login failed.
+                    </p>
+                )}
             </form>
+
         </div>
-    );
+    </div> </>
+  )
 }

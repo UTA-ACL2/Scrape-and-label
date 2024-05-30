@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import Item from '../itemModel'; // Import the Mongoose model
+import Item from '../../../models/itemModel'; // Import the Mongoose model
 import { authenticateToken, NextRequestWithUser } from '../jwtMiddleware';
 
 export async function POST(req: NextRequestWithUser) {

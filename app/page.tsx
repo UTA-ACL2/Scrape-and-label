@@ -1,54 +1,33 @@
 'use client'
-import Image from 'next/image'
 import {useEffect, useState, useRef} from 'react';
-import {CSVLink, CSVDownload} from "react-csv";
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import api from './api/api';
-import { useRouter } from 'next/navigation';
-import {checkToken} from './api/checkJWT';
-import {getDatabase} from './api/database';
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter,usePathname } from "next/navigation";
+
+
+
+
+// authentication
 
 export default function Home() {
-    const router =  useRouter();
-    const [db,
-        setdb] = useState < any > (null);
-    // Use router inside useEffect to ensure it's not being used in server-side rendering
+    const pathname = usePathname();
+    const router = useRouter();
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
+
     useEffect(() => {
-        const fetchData = async () => {
-            const connectToDb = async () => {
-                if (!db) {
-                    await getDatabase();
-                    setdb(true);
-                }
-            };
-            connectToDb();
-
-            const token = localStorage.getItem('token');
-            if (token && await checkToken(token)) {
-                router.push('/');
-            }
-        };
-
-        fetchData();
-
-    }, []);
-    const checkTokenAndCallApi = async (apiFunction:any, ...params:any) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login');
-            return;
-        }
-        return await apiFunction(...params);
-    };
-    useEffect(() => {
-     
+        if (!loading && !session) {
+            console.log(session)
         if (youtubeJsonData
             ?.length > 0) {
             return;
         };
-        checkTokenAndCallApi(fetchYoutubeData);
-    }, []);
+        fetchYoutubeData();
+    }
+    }, [session, loading]);
+
     const [youtubeJsonData,
         setyoutubeJsonData] = useState < any > ([]);
     const youtubeJsonDataRef = useRef(youtubeJsonData);
@@ -82,40 +61,39 @@ export default function Home() {
             console.error('An error occurred while fetching the YouTube data:', error);
         }
     };
-const handleUpdate = async(jsondata : any, category : any) => {
-    if (!(youtubeJsonDataRef.current.length > 0)) {
-        console.log("returned in handleupdate")
-        return;
-    }
-    try {
-        const response = await api.post(`/api/${category}`, jsondata, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    const handleUpdate = async(jsondata : any, category : any) => {
+        if (!(youtubeJsonDataRef.current.length > 0)) {
+            console.log("returned in handleupdate")
+            return;
+        }
+        try {
+            const response = await api.post(`/api/${category}`, jsondata, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-        const data = response.data;
+            const data = response.data;
 
-        let newyoutubedata = data.message || [];
-        setyoutubeJsonData(newyoutubedata);
-        youtubeJsonDataRef.current = newyoutubedata;
-    } catch (error) {
-        console.error(`An error occurred: ${error}`);
-    }
-};
+            let newyoutubedata = data.message || [];
+            setyoutubeJsonData(newyoutubedata);
+            youtubeJsonDataRef.current = newyoutubedata;
+        } catch (error) {
+            console.error(`An error occurred: ${error}`);
+        }
+    };
 
     const handleBad = (jsondata : any) => {
-        checkTokenAndCallApi(handleUpdate, jsondata, "bad");
+        handleUpdate(jsondata, "bad")
     };
 
     const handleGood = (jsondata : any) => {
-        checkTokenAndCallApi(handleUpdate, jsondata, "good");
-
+        handleUpdate(jsondata, "good");
 
     };
 
     const handleSkip = (jsondata : any) => {
-        checkTokenAndCallApi(handleUpdate, jsondata, "skip");
+        handleUpdate(jsondata, "skip");
 
     };
 
@@ -138,11 +116,11 @@ const handleUpdate = async(jsondata : any, category : any) => {
     };
 
     useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-    };
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
     }, []);
 
     const handleDownload = async(e : any) => {
@@ -163,8 +141,7 @@ const handleUpdate = async(jsondata : any, category : any) => {
     };
 
     return (
-        <main
-            className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main className="flex min-h-screen flex-col items-center justify-between p-24">
             {youtubeJsonData
                 ?.length && <div>
                     {youtubeJsonData
@@ -177,9 +154,10 @@ const handleUpdate = async(jsondata : any, category : any) => {
             <div className="card w-150 bg-base-100 shadow-xl">
                 {youtubeJsonData[0]
                     ?.video_id && <LiteYouTubeEmbed
-                    id={`${youtubeJsonData[0]?.video_id}`}
-                    title={`${youtubeJsonData[0]?.title}`}
-                  />
+                        id={`${youtubeJsonData[0]
+                        ?.video_id}`}
+                        title={`${youtubeJsonData[0]
+                        ?.title}`}/>
 }
                 <div className="card-body">
                     <h2 className="card-title">{youtubeJsonData[0]

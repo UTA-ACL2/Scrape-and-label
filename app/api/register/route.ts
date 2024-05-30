@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import User from '../userModel';
+import User from '../../../models/userModel';
 
 export async function POST(request: NextRequest) {
     const body = await request.json();

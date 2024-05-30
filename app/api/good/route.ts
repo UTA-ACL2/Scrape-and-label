@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import Item from '../itemModel';
+import Item from '../../../models/itemModel';
 import { authenticateToken, NextRequestWithUser } from '../jwtMiddleware';
 
 export async function POST(req: NextRequestWithUser) {
