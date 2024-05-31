@@ -3,10 +3,8 @@ import {useState, useEffect} from 'react';
 import api from '../../api/api';
 import Select from "react-dropdown-select";
 import CustomSelect from '@/app/components/CustomSearch';
-import { useSession, signIn, signOut } from "next-auth/react";
+import {useSession, signIn, signOut} from "next-auth/react";
 import CustomGroupSearch from '@/app/components/CustomGroupSearch';
-
-
 
 type Item = {
     title: string;
@@ -20,6 +18,8 @@ type Item = {
     createdBy: string;
     labeledBy: string;
     exclude: boolean;
+    keyword: string;
+    assignedTo: string;
 };
 type keywordtype = {
     id: string,
@@ -42,73 +42,77 @@ export default function Register() {
         setItems] = useState < Item[] > ([]);
     const [Cookie,
         setCookie] = useState('');
-    const { data: session, status } = useSession();
+    const {data: session, status} = useSession();
+    const [isLoading,
+        setIsLoading] = useState(false);
 
-    const handleCookieChange = (e: any) => {
+    const handleCookieChange = (e : any) => {
         setCookie(e.target.value);
     };
 
-    const sendCookie = async () => {
-        if(!(session?.user.role === 'admin' || session?.user.role === 'usurper') ) return;
-        const response = await api.post('/api/admin/users/cookie', { cookie:Cookie, userId:session?.user.id });
+    const sendCookie = async() => {
+        if (!(session
+            ?.user.role === 'admin' || session
+                ?.user.role === 'usurper')) 
+            return;
+        const response = await api.post('/api/admin/users/cookie', {
+            cookie: Cookie,
+            userId: session
+                ?.user.id
+        });
         if (response.status === 200) {
             console.log('Cookie sent successfully');
         } else {
             console.error('Failed to send cookie');
         };
     };
-    
-    // const connectToDatabase = async() => {
-    //     try {
-    //         let response = await fetch('/api/connect');
-    //         return true;
-    //     } catch (error) {
-    //         return error;
-    //     }
-    // };
 
-
+    // const connectToDatabase = async() => {     try {         let response = await
+    // fetch('/api/connect');         return true;     } catch (error) { return
+    // error;     } };
 
     useEffect(() => {
-        const fetchCookie = async () => {
-            const response = await fetch(`/api/admin/users/cookie?userId=${session?.user.id}`);
+        const fetchCookie = async() => {
+            const response = await fetch(`/api/admin/users/cookie?userId=${session
+                ?.user.id}`);
             if (response.ok) {
                 const data = await response.json();
-                if(!data?.cookie) return;
+                if (!data
+                    ?.cookie) 
+                    return;
                 setCookie(data.cookie);
             } else {
                 console.error('Failed to fetch cookie');
             }
         };
 
-        if (session?.user.role === 'admin' || session?.user.role === 'usurper') {
+        if (session
+            ?.user.role === 'admin' || session
+                ?.user.role === 'usurper') {
             fetchCookie();
         }
     }, [session]);
 
+    const fetchKeywords = async() => {
+        const response = await api.get('/api/admin/keywords/list');
+        if (response.status === 200) {
+            setKeywords([
+                {
+                    "name": "Select",
+                    "id": "",
+                    "superset": "",
+                    "supersetid": ""
+                },
+                ...response.data
+            ]);
+        } else {
+            console.error('Failed to fetch keywords');
+        }
+    };
     useEffect(() => {
-        // const connect = async() => {
-        //     await connectToDatabase();
-        // };
-        // connect();
+        // const connect = async() => {     await connectToDatabase(); }; connect();
         if (keywords
             ?.length === 0) {
-            const fetchKeywords = async() => {
-                const response = await api.get('/api/admin/keywords/list');
-                if (response.status === 200) {
-                    setKeywords([
-                        {
-                            "name": "Select",
-                            "id": "",
-                            "superset":"",
-                            "supersetid":""
-                        },
-                        ...response.data
-                    ]);
-                } else {
-                    console.error('Failed to fetch keywords');
-                }
-            };
             const fetchKeywordGroups = async() => {
                 const response = await api.get('/api/admin/keywords/group/list');
                 if (response.status === 200) {
@@ -129,7 +133,7 @@ export default function Register() {
     }, []);
 
     const addKeyword = async() => {
-        const response = await api.post('/api/admin/keywords/add', {keyword, keywordGroupId:keywordSupersetid});
+        const response = await api.post('/api/admin/keywords/add', {keyword, keywordGroupId: keywordSupersetid});
         if (response.status === 200) {
             setKeywords((prevKeywords : any) => [
                 ...prevKeywords,
@@ -163,12 +167,14 @@ export default function Register() {
 
     const handleKeywordChange = async(selectedKeyword : any) => {
         setdropDown(selectedKeyword);
-        const response = await api.get(`/api/admin/keywords?keyword=${selectedKeyword}`);
-        setItems(response.data);
     };
     const handleKeywordGroupChange = async(selectedKeywordGroup : any) => {
         setkeywordSupersetid(selectedKeywordGroup)
     };
+    const handleShowScrappedBygroup = async(selectedKeywordGroup : any) => {
+        const response = await api.get(`/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`);
+        setItems(response.data);
+    }
     const handleKeywordType = (e : any) => {
         setKeyword(e.target.value)
     }
@@ -176,13 +182,26 @@ export default function Register() {
         setkeywordSuperset(e.target.value)
     }
 
-    const handleScrape = async() =>{
+    const handleScrape = async() => {
+        setIsLoading(true);
         let keyword = dropDown;
-        const response = await api.post('/api/admin/scrape', { keyword, userId:session?.user.id ,Cookie});
-        if (response.status === 200) {
-            console.log('Scraping started');
-        } else {
-            console.error('Failed to start scraping');
+        try {
+            const response = await api.post('/api/admin/scrape', {
+                keyword,
+                userId: session
+                    ?.user.id,
+                Cookie
+            });
+            if (response.status === 200) {
+                console.log(response.data.message)
+                fetchKeywords();
+            } else {
+                console.error('Failed to start scraping');
+            }
+        } catch (error) {
+            console.error('Failed to start scraping', error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -203,19 +222,20 @@ export default function Register() {
                     className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-1">Set Cookie</button>
             </div>
             <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-    
+
             <div>
                 <form onSubmit={addGroup} className="flex flex-col space-y-2">
-                <div className='flex space-x-4'>
-                <label className="flex flex-col">
-                    Group (eg: "dog","cat","bird"):
-                    <input
-                        type="text"
-                        value={keywordSuperset}
-                        onChange={e => handleGroupType(e)}
-                        className="p-2 border border-gray-300 rounded text-emerald-600" required/>
-                </label>
-            </div>
+                    <div className='flex space-x-4'>
+                        <label className="flex flex-col">
+                            Group (eg: "dog","cat","bird"):
+                            <input
+                                type="text"
+                                value={keywordSuperset}
+                                onChange={e => handleGroupType(e)}
+                                className="p-2 border border-gray-300 rounded text-emerald-600"
+                                required/>
+                        </label>
+                    </div>
                     <button
                         type="submit"
                         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add Group</button>
@@ -224,21 +244,22 @@ export default function Register() {
             <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
             <div>
                 <form onSubmit={addKeyword} className="flex flex-col space-y-2">
-                <div className='flex space-x-4'>
-                <label className="flex flex-col">
-                    Keyword:
-                    <input
-                        type="text"
-                        value={keyword}
-                        onChange={e => handleKeywordType(e)}
-                        className="p-2 border border-gray-300 rounded text-emerald-600" required/>
-                </label>
-                <div className="w-full">
-                    <CustomGroupSearch
-                        options={keywordGroups}
-                        onChange={(selectedOption) => handleKeywordGroupChange(selectedOption)}/>
-                </div>
-            </div>
+                    <div className='flex space-x-4'>
+                        <label className="flex flex-col">
+                            Keyword:
+                            <input
+                                type="text"
+                                value={keyword}
+                                onChange={e => handleKeywordType(e)}
+                                className="p-2 border border-gray-300 rounded text-emerald-600"
+                                required/>
+                        </label>
+                        <div className="w-full">
+                            <CustomGroupSearch
+                                options={keywordGroups}
+                                onChange={(selectedOption) => handleKeywordGroupChange(selectedOption)}/>
+                        </div>
+                    </div>
                     <button
                         type="submit"
                         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add Keyword</button>
@@ -249,8 +270,8 @@ export default function Register() {
                         options={keywords}
                         onChange={(selectedOption) => handleKeywordChange(selectedOption)}/>
                 </div>
-                <div className='flex flex-row items-center justify-center space-x-4'>
-                <button
+                {!isLoading && <div className='flex flex-row items-center justify-center space-x-4'>
+                    <button
                         disabled={dropDown == "Select"}
                         onClick={() => handleScrape()}
                         className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-orange-600">Scrape Keyword</button>
@@ -258,34 +279,67 @@ export default function Register() {
                         disabled={dropDown == "Select"}
                         onClick={() => removeKeyword()}
                         className="mt-4 p-2 bg-red-500 text-white rounded hover:bg-red-600">Remove Keyword</button>
-                </div>
+                </div>}
+                {isLoading &&< div > <span className="loading loading-bars loading-lg"></span>Scrapping .... </div>}
             </div>
+            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
-            <table
-                className="mt-8 w-4/5 text-center text-blue-300 border-2 border-blue-300 border-collapse mx-auto">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Channel</th>
-                        <th>Duration</th>
-                        <th>View Count</th>
-                        <th>Status</th>
-                        <th>Label</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items.map(item => (
-                        <tr key={item.video_id} className="border border-blue-300">
-                            <td>{item.title}</td>
-                            <td>{item.channel}</td>
-                            <td>{item.duration}</td>
-                            <td>{item.viewCount}</td>
-                            <td>{item.status}</td>
-                            <td>{item.label}</td>
+            <div className="mt-7 min-w-fit">
+                <CustomGroupSearch
+                    options={keywordGroups}
+                    onChange={(selectedOption) => handleShowScrappedBygroup(selectedOption)}/>
+            </div>
+            <div
+                style={{
+                maxHeight: '100vh',
+                overflowY: 'auto'
+            }}
+                className='mb-10'>
+                {items
+                    ?.length === 0 && <div className="text-center mt-8 text-red-900">No items found</div>}
+                {items
+                    ?.length > 0 && <div className="text-center mt-8 text-red-900">{items
+                            ?.length}
+                        items found</div>}
+                <table
+                    className="mt-8 w-4/5 text-center text-red-900 border-2 border-blue-300 border-collapse mx-auto bg-white">
+                    <thead>
+                        <tr>
+                            <th className="border border-blue-300 w-1/8">Title</th>
+                            <th className="border border-blue-300 w-1/8">Channel</th>
+                            <th className="border border-blue-300 w-1/8">Duration</th>
+                            <th className="border border-blue-300 w-1/8">View Count</th>
+                            <th className="border border-blue-300 w-1/8">Status</th>
+                            <th className="border border-blue-300 w-1/8">Label</th>
+                            <th className="border border-blue-300 w-1/8">keyword</th>
+                            <th className="border border-blue-300 w-1/8">Created By</th>
+                            <th className="border border-blue-300 w-1/8">Assigned To</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {items.map(item => (
+                            <tr key={item.video_id}>
+                                <td className="border border-blue-300">
+                                    <a
+                                        href={`https://www.youtube.com/watch?v=${item.video_id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        {item.title}
+                                    </a>
+                                </td>
+                                <td className="border border-blue-300">{item.channel}</td>
+                                <td className="border border-blue-300">{item.duration}</td>
+                                <td className="border border-blue-300">{item.viewCount}</td>
+                                <td className="border border-blue-300">{item.status}</td>
+                                <td className="border border-blue-300">{item.label}</td>
+                                <td className="border border-blue-300">{item.keyword}</td>
+                                <td className="border border-blue-300">{item.createdBy}</td>
+                                <td className="border border-blue-300">{item.assignedTo}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
