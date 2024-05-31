@@ -5,6 +5,7 @@ import Select from "react-dropdown-select";
 import CustomSelect from '@/app/components/CustomSearch';
 import {useSession, signIn, signOut} from "next-auth/react";
 import CustomGroupSearch from '@/app/components/CustomGroupSearch';
+import CustomUserSearch from '@/app/components/UserSearch';
 
 type Item = {
     title: string;
@@ -20,11 +21,20 @@ type Item = {
     exclude: boolean;
     keyword: string;
     assignedTo: string;
+    keywordGroup: string;
 };
 type keywordtype = {
     id: string,
     name: string
 }
+
+type User = {
+    _id: string;
+    username: string;
+    role: string;
+    isActive: boolean;
+};
+
 export default function Register() {
     const [keyword,
         setKeyword] = useState('');
@@ -45,6 +55,42 @@ export default function Register() {
     const {data: session, status} = useSession();
     const [isLoading,
         setIsLoading] = useState(false);
+    const [users,
+        setUsers] = useState < User[] > ([]);
+    const [selectedUserId,
+        setselectedUserId] = useState("");
+    const fetchUsers = async() => {
+        const response = await api.get('/api/admin/users/getActive');
+        setUsers(response.data);
+    };
+    const [selectedKeywordGroupToAssign,
+        setselectedKeywordGroupToAssign] = useState("");
+
+    const [assignAmount,
+        setassignAmount] = useState(0);
+
+    const handleAssign = async() => {
+        if (!selectedUserId) {
+            alert('Please select a user');
+            return;
+        }
+        const response = await api.post('/api/admin/users/assign', {
+            userId: selectedUserId,
+            assignAmount,
+            keywordGroupId: selectedKeywordGroupToAssign
+        });
+        if (response.status === 200) {
+            console.log('Assigned successfully');
+            showItemsbyGroup(selectedKeywordGroupToAssign);
+        } else {
+            console.error('Failed to assign');
+        }
+
+    }
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const handleCookieChange = (e : any) => {
         setCookie(e.target.value);
@@ -66,10 +112,6 @@ export default function Register() {
             console.error('Failed to send cookie');
         };
     };
-
-    // const connectToDatabase = async() => {     try {         let response = await
-    // fetch('/api/connect');         return true;     } catch (error) { return
-    // error;     } };
 
     useEffect(() => {
         const fetchCookie = async() => {
@@ -168,12 +210,21 @@ export default function Register() {
     const handleKeywordChange = async(selectedKeyword : any) => {
         setdropDown(selectedKeyword);
     };
+    const handleUsersChange = async(selectedUser : any) => {
+        setselectedUserId(selectedUser);
+    };
+
     const handleKeywordGroupChange = async(selectedKeywordGroup : any) => {
         setkeywordSupersetid(selectedKeywordGroup)
     };
-    const handleShowScrappedBygroup = async(selectedKeywordGroup : any) => {
+    const showItemsbyGroup = async(selectedKeywordGroup:any) => {
         const response = await api.get(`/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`);
         setItems(response.data);
+    }
+    const handleShowScrappedBygroup = async(selectedKeywordGroup : any) => {
+        setselectedKeywordGroupToAssign(selectedKeywordGroup);
+        showItemsbyGroup(selectedKeywordGroup);
+
     }
     const handleKeywordType = (e : any) => {
         setKeyword(e.target.value)
@@ -193,7 +244,6 @@ export default function Register() {
                 Cookie
             });
             if (response.status === 200) {
-                console.log(response.data.message)
                 fetchKeywords();
             } else {
                 console.error('Failed to start scraping');
@@ -205,41 +255,49 @@ export default function Register() {
         }
     }
 
+    const handleNumberChange = (e : any) => {
+        const value = e.target.value;
+        if (value > 0) {
+            setassignAmount(value);
+        }
+    }
+
     return (
         <div
             className="flex flex-col items-center justify-center h-screen bg-gray-800 text-white">
-            <div className="flex flex-col items-center justify-center">
-                <label className="flex flex-col">
-                    Cookie:
-                    <input
-                        type="text"
-                        value={Cookie}
-                        onChange={e => handleCookieChange(e)}
-                        className="p-2 border border-gray-300 rounded text-emerald-600"/>
-                </label>
-                <button
-                    onClick={sendCookie}
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-1">Set Cookie</button>
-            </div>
-            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-
-            <div>
-                <form onSubmit={addGroup} className="flex flex-col space-y-2">
-                    <div className='flex space-x-4'>
-                        <label className="flex flex-col">
-                            Group (eg: "dog","cat","bird"):
-                            <input
-                                type="text"
-                                value={keywordSuperset}
-                                onChange={e => handleGroupType(e)}
-                                className="p-2 border border-gray-300 rounded text-emerald-600"
-                                required/>
-                        </label>
-                    </div>
+            <div className="flex flex-row justify-center items-center space-x-4">
+                <div className="flex flex-col items-center justify-center mt-14">
+                    <label className="flex flex-col">
+                        Cookie:
+                        <input
+                            type="text"
+                            value={Cookie}
+                            onChange={e => handleCookieChange(e)}
+                            className="p-2 border border-gray-300 rounded text-emerald-600"/>
+                    </label>
                     <button
-                        type="submit"
-                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add Group</button>
-                </form>
+                        onClick={sendCookie}
+                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-1">Set Cookie</button>
+                </div>
+
+                <div>
+                    <form onSubmit={addGroup} className="flex flex-col space-y-2">
+                        <div className='flex space-x-4'>
+                            <label className="flex flex-col">
+                                Group (eg: "dog","cat","bird"):
+                                <input
+                                    type="text"
+                                    value={keywordSuperset}
+                                    onChange={e => handleGroupType(e)}
+                                    className="p-2 border border-gray-300 rounded text-emerald-600"
+                                    required/>
+                            </label>
+                        </div>
+                        <button
+                            type="submit"
+                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add Group</button>
+                    </form>
+                </div>
             </div>
             <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
             <div>
@@ -284,23 +342,53 @@ export default function Register() {
             </div>
             <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
-            <div className="mt-7 min-w-fit">
-                <CustomGroupSearch
-                    options={keywordGroups}
-                    onChange={(selectedOption) => handleShowScrappedBygroup(selectedOption)}/>
+            <div className="flex">
+                <div className="mt-7 min-w-fit">
+                    <CustomGroupSearch
+                        options={keywordGroups}
+                        onChange={(selectedOption) => handleShowScrappedBygroup(selectedOption)}/>
+                </div>
+                {items
+                    ?.length > 0 && <div className="text-center mt-8 text-red-900">
+                        <span>{items
+                                ?.length}
+                            items found</span>
+                        <div className='mt-4'>
+                            <div className="flex space-x-4">
+                                <div>
+                                    <label>Assign to user:</label>
+                                    <CustomUserSearch
+                                        options={users}
+                                        onChange={(selectedOption) => handleUsersChange(selectedOption)}/>
+                                </div>
+                                <div className="flex flex-col items-center justify-center">
+                                    <label className="flex flex-col">
+                                        Enter a number:
+                                        <input
+                                            type="number"
+                                            value={assignAmount}
+                                            onChange={e => handleNumberChange(e)}
+                                            className="p-2 border border-gray-300 rounded text-emerald-600"/>
+                                    </label>
+                                </div>
+                                <div className='flex items-center justify-center'>
+                                    <button
+                                        type="submit"
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-4"
+                                        onClick={() => handleAssign()}>Assign</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>}
             </div>
             <div
                 style={{
-                maxHeight: '100vh',
+                maxHeight: '400vh',
                 overflowY: 'auto'
             }}
                 className='mb-10'>
                 {items
                     ?.length === 0 && <div className="text-center mt-8 text-red-900">No items found</div>}
-                {items
-                    ?.length > 0 && <div className="text-center mt-8 text-red-900">{items
-                            ?.length}
-                        items found</div>}
                 <table
                     className="mt-8 w-4/5 text-center text-red-900 border-2 border-blue-300 border-collapse mx-auto bg-white">
                     <thead>
@@ -314,11 +402,12 @@ export default function Register() {
                             <th className="border border-blue-300 w-1/8">keyword</th>
                             <th className="border border-blue-300 w-1/8">Created By</th>
                             <th className="border border-blue-300 w-1/8">Assigned To</th>
+                            {/* <th className="border border-blue-300 w-1/8">videoid</th> */}
                         </tr>
                     </thead>
                     <tbody>
                         {items.map(item => (
-                            <tr key={item.video_id}>
+                            <tr key={item.video_id + item.keywordGroup}>
                                 <td className="border border-blue-300">
                                     <a
                                         href={`https://www.youtube.com/watch?v=${item.video_id}`}
@@ -335,6 +424,7 @@ export default function Register() {
                                 <td className="border border-blue-300">{item.keyword}</td>
                                 <td className="border border-blue-300">{item.createdBy}</td>
                                 <td className="border border-blue-300">{item.assignedTo}</td>
+                                {/* <td className="border border-blue-300">{item.video_id}</td> */}
                             </tr>
                         ))}
                     </tbody>
