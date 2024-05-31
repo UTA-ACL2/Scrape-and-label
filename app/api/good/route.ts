@@ -1,12 +1,13 @@
-import { NextResponse } from 'next/server';
-import Item from '../../../models/itemModel';
-import {  NextRequestWithUser } from '../jwtMiddleware';
+import {NextResponse, NextRequest} from 'next/server';
+import { ObjectId } from 'mongodb';
+import Item from '@/models/itemModel';
 
-export async function POST(req: NextRequestWithUser) {
+export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const item = body;
         const {
+            _id,
             title,
             thumbnails,
             duration,
@@ -14,7 +15,9 @@ export async function POST(req: NextRequestWithUser) {
             channel,
             video_id
         } = item;
-        await Item.updateOne({ video_id }, { label: 'good', status: 'complete' });
+        const idObj = ObjectId.createFromHexString(_id); // Convert id to ObjectId
+
+        await Item.updateOne({ _id: idObj }, { label: 'good', status: 'complete' });
         const items = await Item.find({ status: 'incomplete' });
         return NextResponse.json({ message: items }, { status: 200 });
     } catch (e) {

@@ -3,6 +3,8 @@
 import mongoose from 'mongoose';
 const { ObjectId } = mongoose.Schema.Types;
 import Keyword from './keywordModel';
+import User from './userModel';
+import { UpdateQuery } from 'mongoose';
 
 const itemSchema = new mongoose.Schema({
     title: String,
@@ -54,6 +56,22 @@ itemSchema.pre('save', async function(next) {
     }
     next();
 });
+
+itemSchema.pre('updateOne', async function(next) {
+    const update = this.getUpdate();
+    console.log(update)
+    if (update && 'status' in update && update.status === 'complete') {
+        const item = await this.model.findOne(this.getQuery());
+        if (item && item.status === 'incomplete') {
+            await User.updateOne(
+                { _id: item.labeledBy },
+                { $inc: { totalStatusChanges: 1 } }
+            );
+        }
+    }
+    next();
+});
+
 itemSchema.index({ video_id: 1, keywordGroup: 1 }, { unique: true });
 
 const Item = mongoose.models.Item || mongoose.model('Item', itemSchema);

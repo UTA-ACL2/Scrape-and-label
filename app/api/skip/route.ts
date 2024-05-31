@@ -1,22 +1,19 @@
-import { NextResponse } from 'next/server';
-import Item from '../../../models/itemModel'; // Import the Mongoose model
-import { NextRequestWithUser } from '../jwtMiddleware';
+import {NextResponse, NextRequest} from 'next/server';
+import { ObjectId } from 'mongodb';
+import Item from '@/models/itemModel'; // Import the Mongoose model
 
-export async function POST(req: NextRequestWithUser) {
+
+export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const item = body;
         const {
-            title,
-            thumbnails,
-            duration,
-            viewCount,
-            channel,
-            video_id
+            _id,
         } = item;
+        const idObj = ObjectId.createFromHexString(_id); // Convert id to ObjectId
 
         // Use Mongoose's findOneAndUpdate method
-        await Item.findOneAndUpdate({ video_id: video_id }, { label: 'skip', status: 'complete' });
+        await Item.findOneAndUpdate({ _id: idObj }, { label: 'skip', status: 'complete' });
 
         const items = await Item.find({ status: "incomplete" }); // Use Mongoose's find method
         return NextResponse.json({ message: items }, { status: 200 });

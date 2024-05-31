@@ -9,6 +9,7 @@ interface IUser {
     isActive: boolean;
     createdAt: Date;
     youtubeCookie: string;
+    totalStatusChanges: number;
 }
 
 interface IUserDocument extends IUser, Document {
@@ -33,6 +34,10 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    totalStatusChanges: {
+        type: Number,
+        default: 0
     },
 });
 
