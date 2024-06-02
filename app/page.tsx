@@ -66,6 +66,7 @@ export default function Home() {
             return;
         }
         try {
+            console.log(jsondata)
             const response = await api.post(`/api/${category}`, jsondata, {
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import User from '@/models/userModel';
+import getDatabase from "@/database/database";
 
 export async function POST(request: NextRequest) {
+    await getDatabase();
     const body = await request.json();
     const {
         username,

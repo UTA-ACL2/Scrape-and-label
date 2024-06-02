@@ -1,7 +1,8 @@
 import {NextResponse, NextRequest} from 'next/server';
 import { ObjectId } from 'mongodb';
 import Item from '@/models/itemModel'; // Import the Mongoose model
-
+import getDatabase from "@/database/database";
+import updateEntry from '../updateEntry';
 
 export async function POST(req: NextRequest) {
     try {
@@ -9,13 +10,16 @@ export async function POST(req: NextRequest) {
         const item = body;
         const {
             _id,
+            assignedTo,
         } = item;
+        await getDatabase();
         const idObj = ObjectId.createFromHexString(_id); // Convert id to ObjectId
-
+        const userIDObj = ObjectId.createFromHexString(assignedTo); // Convert userID to ObjectId
         // Use Mongoose's findOneAndUpdate method
         await Item.findOneAndUpdate({ _id: idObj }, { label: 'skip', status: 'complete' });
 
-        const items = await Item.find({ status: "incomplete" }); // Use Mongoose's find method
+        // Call the updateEntry function to update the user's totalStatusChanges field and return the items assigned to the user
+        let items = await updateEntry(userIDObj);
         return NextResponse.json({ message: items }, { status: 200 });
     } catch (e) {
         console.log(e);

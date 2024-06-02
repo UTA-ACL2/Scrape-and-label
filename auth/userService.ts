@@ -3,7 +3,7 @@ export const userService = {
 };
 
 import User from '@/models/userModel';
-import {getDatabase} from '@/database/database';
+import getDatabase from '@/database/database';
 
 async function authenticate(username : string, password : string) {
     try {

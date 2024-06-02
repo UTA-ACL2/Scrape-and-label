@@ -1,7 +1,6 @@
 'use client'
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {getDatabase} from '../../../database/database';
 import api from '../../api/api';
 
 type User = {

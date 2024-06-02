@@ -7,6 +7,9 @@ import {useSession, signIn, signOut} from "next-auth/react";
 import CustomGroupSearch from '@/app/components/CustomGroupSearch';
 import CustomUserSearch from '@/app/components/UserSearch';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 type Item = {
     title: string;
     thumbnails: string;
@@ -81,6 +84,7 @@ export default function Register() {
         });
         if (response.status === 200) {
             console.log('Assigned successfully');
+            toast.success('Item successfully assigned!');
             showItemsbyGroup(selectedKeywordGroupToAssign);
         } else {
             console.error('Failed to assign');
@@ -208,9 +212,11 @@ export default function Register() {
     };
 
     const handleKeywordChange = async(selectedKeyword : any) => {
+        if(!selectedKeyword) return;
         setdropDown(selectedKeyword);
     };
     const handleUsersChange = async(selectedUser : any) => {
+        if(!selectedUser) return;
         setselectedUserId(selectedUser);
     };
 
@@ -218,10 +224,14 @@ export default function Register() {
         setkeywordSupersetid(selectedKeywordGroup)
     };
     const showItemsbyGroup = async(selectedKeywordGroup:any) => {
+        if(!selectedKeywordGroup) return;
         const response = await api.get(`/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`);
         setItems(response.data);
     }
     const handleShowScrappedBygroup = async(selectedKeywordGroup : any) => {
+        if (!selectedKeywordGroup) {
+            return;
+        }
         setselectedKeywordGroupToAssign(selectedKeywordGroup);
         showItemsbyGroup(selectedKeywordGroup);
 
@@ -264,7 +274,7 @@ export default function Register() {
 
     return (
         <div
-            className="flex flex-col items-center justify-center h-screen bg-gray-800 text-white">
+            className="flex flex-col items-center justify-center  bg-gray-800 text-white">
             <div className="flex flex-row justify-center items-center space-x-4">
                 <div className="flex flex-col items-center justify-center mt-14">
                     <label className="flex flex-col">
@@ -351,8 +361,7 @@ export default function Register() {
                 {items
                     ?.length > 0 && <div className="text-center mt-8 text-red-900">
                         <span>{items
-                                ?.length}
-                            items found</span>
+                                ?.length } items found</span>
                         <div className='mt-4'>
                             <div className="flex space-x-4">
                                 <div>
@@ -383,8 +392,8 @@ export default function Register() {
             </div>
             <div
                 style={{
-                maxHeight: '400vh',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                maxHeight: '50vh'
             }}
                 className='mb-10'>
                 {items
@@ -406,7 +415,7 @@ export default function Register() {
                         </tr>
                     </thead>
                     <tbody>
-                        {items.map(item => (
+                        {items?.map(item => (
                             <tr key={item.video_id + item.keywordGroup}>
                                 <td className="border border-blue-300">
                                     <a

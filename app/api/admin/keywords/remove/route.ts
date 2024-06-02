@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import keywords from '@/models/keywordModel';
+import getDatabase from "@/database/database";
+
 
 export async function DELETE(request: NextRequest) {
+    await getDatabase();
     const {searchParams} = new URL(request.url);
     const keyword = searchParams.get('keyword');
 

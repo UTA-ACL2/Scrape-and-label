@@ -3,9 +3,10 @@
 import {NextRequest, NextResponse} from 'next/server';
 import Item from '@/models/itemModel';
 import {ObjectId} from 'mongodb';
-import Keyword from '@/models/keywordModel';
+import getDatabase from "@/database/database";
 
 export async function POST(request : NextRequest) {
+    await getDatabase();
     const { userId, keywordGroupId, assignAmount } = await request.json();
     if (!keywordGroupId || !userId || !assignAmount) {
         return NextResponse.json({message: 'keywordGroupId, userId or assignAmount is not provided'});

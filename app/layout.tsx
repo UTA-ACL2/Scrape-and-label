@@ -5,7 +5,9 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from './components/Navbar';
 import SessionWrapper from './components/SessionWrapper';
-import DatabaseConnectionProvider from './components/DatabaseConnectionProvider';
+import { ToastContainer } from 'react-toastify';
+
+// import DatabaseConnectionProvider from './components/DatabaseConnectionProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,9 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en">
             <body className={inter.className}>
                 <SessionWrapper>
-                    <DatabaseConnectionProvider>
-                        <Navbar /> {children}
-                    </DatabaseConnectionProvider>
+                        <Navbar /><ToastContainer /> {children}
                 </SessionWrapper>
             </body>
         </html>

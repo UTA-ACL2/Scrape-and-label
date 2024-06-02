@@ -37,25 +37,27 @@ const Navbar = () => {
       }
   };
     connect();
-  }, [session, loading]);
+  }, [loading]);
 
-  
+
+
+
 
 
   return (
 
     <div>
 
-    {!session && (pathname === '/login' || loading) && (
-       <div
-       className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
-       <div className='ml-1'>AniVoice</div>
-       <div>Login Page</div>
-       <div></div>
-     </div>
+    {loading || (!session ) && (
+      <div
+        className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
+        <div className='ml-1'>AniVoice</div>
+        {pathname === '/login' && <div>Login Page</div>}
+        <div></div>
+      </div>
     )}
 
-    {!(pathname === '/login' || loading) && session && (
+    {!loading && !(pathname === '/login') && session && (
   <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
   <div className="flex items-center space-x-2">
     <span className="text-lg font-bold ">Welcome,</span>
@@ -64,7 +66,13 @@ const Navbar = () => {
   </div>
     <Link href="/">
         <span className="text-lg font-bold">AniVoice</span>
-      </Link>
+    </Link>
+    {!(pathname === '/leaderboard') && (
+    <Link href="/leaderboard">
+      <span className="text-lg font-bold">leaderboard</span>
+    </Link>
+  )}
+
     {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
       <>
       <Link href="/admin/register">

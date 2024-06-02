@@ -1,6 +1,7 @@
 import {NextResponse, NextRequest} from 'next/server';
 import Item from '@/models/itemModel';
 import {ObjectId} from 'mongodb';
+import getDatabase from "@/database/database";
 
 export async function GET(req : NextRequest) {
     try {
@@ -9,6 +10,7 @@ export async function GET(req : NextRequest) {
         if (!userID) {
             return NextResponse.json({message: "userID is not provided"});
         };
+        await getDatabase();
         const userIDObj = ObjectId.createFromHexString(userID); // Convert userID to ObjectId
         const items = await Item.find({assignedTo: userIDObj, status: "incomplete"}); // Use Mongoose's find method
         return NextResponse.json({message: items});

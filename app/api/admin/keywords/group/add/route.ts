@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import keywordGroupModel from '@/models/keywordGroupModel';
+import getDatabase from "@/database/database";
+
 // keyword group is the superset of keyword
 export async function POST(request: NextRequest) {
     try{
@@ -8,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!keywordSuperset) {
         return NextResponse.json({ message: 'KeywordGroup to add is not provided' });
     }
-
+    await getDatabase();
     const newKeywordGroup = new keywordGroupModel({ keyword: keywordSuperset });
     await newKeywordGroup.save();
 

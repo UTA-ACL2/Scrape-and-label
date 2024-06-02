@@ -3,9 +3,12 @@ import User from '@/models/userModel';
 import ItemModel from '@/models/itemModel';
 import keywords from '@/models/keywordModel';
 import {scrape} from '../../scrape';
-
 import {ObjectId} from 'mongodb';
+import getDatabase from "@/database/database";
+
+
 export async function POST(request : NextRequest) {
+    await getDatabase();
     const body = await request.json();
     const {keyword, userId, Cookie} = body;
 
