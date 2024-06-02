@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import {NextResponse, NextRequest} from 'next/server';
 import Item from '@/models/itemModel';
 import {ObjectId} from 'mongodb';

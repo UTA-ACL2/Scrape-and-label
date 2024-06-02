@@ -10,7 +10,7 @@ type User = {
     isActive: boolean;
 };
 
-export default function Register() {
+export default function Page() {
     const router = useRouter();
     const [username,
         setUsername] = useState('');

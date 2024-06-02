@@ -38,7 +38,7 @@ type User = {
     isActive: boolean;
 };
 
-export default function Register() {
+export default function Page() {
     const [keyword,
         setKeyword] = useState('');
     const [keywordSuperset,

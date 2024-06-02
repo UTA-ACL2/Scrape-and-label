@@ -13,7 +13,7 @@ type PageProps = {
     }
 }
 
-export default function LoginPage({searchParams} : PageProps) {
+export default function Page({searchParams} : PageProps) {
     const [inputs,
         setInputs] = useState < LoginInput > ({username: "", password: ""});
     const [isLoading,

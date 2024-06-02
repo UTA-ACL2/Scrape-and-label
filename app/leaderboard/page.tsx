@@ -7,7 +7,7 @@ type User = {
     totalStatusChanges: number;
 }
 
-function Leaderboard() {
+export default function Page() {
     const [users,
         setUsers] = useState < User[] > ([]);
 
@@ -68,4 +68,3 @@ function Leaderboard() {
     );
 }
 
-export default Leaderboard;

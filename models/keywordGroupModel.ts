@@ -10,6 +10,6 @@ const keywordGroupSchema = new mongoose.Schema({
 
 });
 
-const Keyword = models.KeywordGroup || mongoose.model('KeywordGroup', keywordGroupSchema);
+const KeywordGroup = models.KeywordGroup || mongoose.model('KeywordGroup', keywordGroupSchema);
 
-export default Keyword;
+export default KeywordGroup;
