@@ -6,7 +6,7 @@ import {NextResponse} from 'next/server';
 export default withAuth(
 // `withAuth` augments your `Request` with the user's token.
 async function middleware(req) {
-
+    console.log("clg middleware working")
     const url = req
         .nextUrl
         .clone()
