@@ -31,7 +31,7 @@ export const authOptions : NextAuthOptions = {
         },
     },
     pages: {
-        signIn: '/webapps/anivoice/login'
+        signIn: 'http://redgiant.uta.edu/webapps/anivoice/login'
     },
     providers: [Credentials({
             name: "Credentials",

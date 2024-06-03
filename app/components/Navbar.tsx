@@ -33,7 +33,7 @@ const Navbar = () => {
   useEffect(() => {
     const connect = async () => {
       if (!loading && !session) {
-          router.push("/webapps/anivoice/login");
+          router.push("http://redgiant.uta.edu/webapps/anivoice/login");
       }
   };
     connect();
