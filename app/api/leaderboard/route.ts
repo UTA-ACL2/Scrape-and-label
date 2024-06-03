@@ -7,6 +7,7 @@ export async function GET(req : NextRequest) {
     try {
         await getDatabase();
         const users = await User.find({}, { username: 1, role: 1, totalStatusChanges: 1 }).sort({ totalStatusChanges: -1 });
+        console.log(users)
         return NextResponse.json({message: users});
     } catch (e) {
         console.log(e);
