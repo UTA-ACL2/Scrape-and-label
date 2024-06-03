@@ -46,3 +46,5 @@ shiba_vit/*
 
 .env
 .env.local
+
+apache.conf
