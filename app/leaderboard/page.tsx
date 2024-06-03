@@ -11,10 +11,10 @@ type User = {
 
 export default function Page() {
     const [users,
-        setUsers] = useState < User[] > ([]);
+        setUsers] = useState < any[] > ([]);
     const {data: session, status} = useSession();
     const fetchUsers = async() => {
-        const response = await api.get(`/webapps/anivoice/leaderboard`, {
+        const response = await api.get(`/webapps/anivoice/api/leaderboard`, {
             headers: {
                 'Content-Type': 'application/json'
             }

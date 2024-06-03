@@ -49,7 +49,7 @@ const Navbar = () => {
     <span className="text-lg font-bold text-gray-900">{session.user?.name || ""}</span>
     <span className="text-sm font-light text-white-500">({session.user?.role})</span>
   </div>
-    <Link href="/">
+    <Link href="/webapps/anivoice/">
         <span className="text-lg font-bold">AniVoice</span>
     </Link>
     {!(pathname === '/webapps/anivoice/leaderboard') && (
