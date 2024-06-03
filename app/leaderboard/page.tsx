@@ -1,5 +1,6 @@
 'use client'
 import React, {useEffect, useState} from 'react';
+import api from '../api/api';
 
 type User = {
     username: string;
@@ -11,10 +12,21 @@ export default function Page() {
     const [users,
         setUsers] = useState < User[] > ([]);
 
+    const fetchUsers = async() => {
+        const response = await api.get(`/webapps/anivoice/leaderboard`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.status !== 200) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const staticData = response.data;
+        setUsers(staticData.message);
+    }
     useEffect(() => {
-        fetch('/webapps/anivoice/leaderboard')
-            .then(response => response.json())
-            .then(data => setUsers(data.message));
+        fetchUsers();
     }, []);
 
     return (
