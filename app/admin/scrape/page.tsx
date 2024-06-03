@@ -139,8 +139,13 @@ export default function Page() {
     }, [session]);
 
     const fetchKeywords = async() => {
-        const response = await api.get('/webapps/anivoice/api/admin/keywords/list');
+        const response = await api.get('/webapps/anivoice/api/admin/keywords/list',   {
+            headers: {
+            'Content-Type': 'application/json'
+        }
+    });
         if (response.status === 200) {
+            console.log(response.data)
             setKeywords([
                 {
                     "name": "Select",
@@ -155,8 +160,13 @@ export default function Page() {
         }
     };
     const fetchKeywordGroups = async() => {
-        const response = await api.get('/webapps/anivoice/api/admin/keywords/group/list');
+        const response = await api.get('/webapps/anivoice/api/admin/keywords/group/list',   {
+            headers: {
+            'Content-Type': 'application/json'
+        }
+    });
         if (response.status === 200) {
+            console.log(response.data)
             setKeywordGroups([
                 {
                     "name": "Select",
@@ -168,14 +178,17 @@ export default function Page() {
             console.error('Failed to fetch keywords groups');
         }
     };
-    useEffect(() => {
-        // const connect = async() => {     await connectToDatabase(); }; connect();
-        if (keywords
-            ?.length === 0) {
-            fetchKeywordGroups();
-            fetchKeywords();
-        }
-    }, []);
+useEffect(() => {
+    // const connect = async() => {     await connectToDatabase(); }; connect();
+    async function fetchData() {
+        await fetchKeywordGroups();
+        await fetchKeywords();
+    }
+
+    if (keywords?.length === 0) {
+        fetchData();
+    }
+}, []);
 
     const addKeyword = async() => {
         const response = await api.post('/webapps/anivoice/api/admin/keywords/add', {keyword, keywordGroupId: keywordSupersetid});
