@@ -11,7 +11,7 @@ export async function GET(request : NextRequest) {
 
         const allItems = await keyword
             .find({})
-            .populate('superset', keywordGroupModel);
+            .populate({path: 'superset', model: keywordGroupModel});
 
         const formattedItems = allItems.map((item) => ({
             id: item._id,
