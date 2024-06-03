@@ -35,7 +35,7 @@ export default function Page({searchParams} : PageProps) {
             username: inputs.username,
             password: inputs.password,
             redirect:true,
-            callbackUrl: '/'
+            callbackUrl: '/webapps/anivoice'
         });
         setIsLoading(false); // Set isLoading to false when the request ends
     }
