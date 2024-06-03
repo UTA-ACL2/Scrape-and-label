@@ -1,5 +1,6 @@
 const nextConfig = {
-    basePath: '/webapps/anivoice',
+    basePath: '',
+    assetPrefix:"/webapps/anivoice",
     webpack: (config) => {
         config.experiments = { ...config.experiments, topLevelAwait: true };
         return config;
