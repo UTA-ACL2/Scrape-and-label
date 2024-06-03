@@ -139,23 +139,28 @@ export default function Page() {
     }, [session]);
 
     const fetchKeywords = async() => {
-        const response = await api.get('/webapps/anivoice/api/admin/keywords/list',   {
-            headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-        if (response.status === 200) {
-            setKeywords([
-                {
-                    "name": "Select",
-                    "id": "",
-                    "superset": "",
-                    "supersetid": ""
-                },
-                ...response.data
-            ]);
-        } else {
-            console.error('Failed to fetch keywords');
+        try {
+            const response = await api.get('/webapps/anivoice/api/admin/keywords/list',   {
+                headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+            console.log(response)
+            if (response.status === 200) {
+                setKeywords([
+                    {
+                        "name": "Select",
+                        "id": "",
+                        "superset": "",
+                        "supersetid": ""
+                    },
+                    ...response.data
+                ]);
+            } else {
+                console.error('Failed to fetch keywords');
+            }
+        } catch (error:any) {
+            console.log(error)
         }
     };
     const fetchKeywordGroups = async() => {
@@ -166,7 +171,6 @@ export default function Page() {
     });
             console.log(response)
         if (response.status === 200) {
-            console.log(response.data)
             setKeywordGroups([
                 {
                     "name": "Select",
