@@ -67,18 +67,18 @@ const Navbar = () => {
     <Link href="/">
         <span className="text-lg font-bold">AniVoice</span>
     </Link>
-    {!(pathname === '/leaderboard') && (
-    <Link href="/leaderboard">
+    {!(pathname === '/webapps/anivoice/leaderboard') && (
+    <Link href="/webapps/anivoice/leaderboard">
       <span className="text-lg font-bold">leaderboard</span>
     </Link>
   )}
 
     {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
       <>
-      <Link href="/admin/register">
+      <Link href="/webapps/anivoice/admin/register">
         <span className="text-lg">Add Accounts</span>
       </Link>
-        <Link href="/admin/scrape">
+        <Link href="/webapps/anivoice/admin/scrape">
         <span className="text-lg">Scrape</span>
       </Link>
       </>

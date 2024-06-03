@@ -34,7 +34,7 @@ export default function Page({searchParams} : PageProps) {
         await signIn("credentials", {
             username: inputs.username,
             password: inputs.password,
-            redirect:false,
+            redirect:true,
             callbackUrl: 'http://redgiant.uta.edu/webapps/anivoice/'
         });
         setIsLoading(false); // Set isLoading to false when the request ends
