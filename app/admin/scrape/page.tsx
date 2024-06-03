@@ -1,7 +1,6 @@
 'use client'
 import {useState, useEffect} from 'react';
 import api from '../../api/api';
-import Select from "react-dropdown-select";
 import CustomSelect from '@/app/components/CustomSearch';
 import {useSession, signIn, signOut} from "next-auth/react";
 import CustomGroupSearch from '@/app/components/CustomGroupSearch';

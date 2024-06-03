@@ -1,6 +1,7 @@
 'use client'
 import {useEffect, useState} from 'react';
 import api from '../api/api';
+import {useSession, signIn, signOut} from "next-auth/react";
 
 type User = {
     username: string;
@@ -11,10 +12,9 @@ type User = {
 export default function Page() {
     const [users,
         setUsers] = useState < User[] > ([]);
-
+    const {data: session, status} = useSession();
     const fetchUsers = async() => {
         const response = await api.get(`/webapps/anivoice/leaderboard`, {
-            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -22,18 +22,20 @@ export default function Page() {
         if (response.status !== 200) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        console.log(response)
-        console.log(response.data)
+        console.log(response.data.message)
         const staticData = response.data;
         setUsers(staticData.message);
     }
     useEffect(() => {
+        if(!session){
+            return;
+        }
         const fetchUsersAsync = async () => {
             await fetchUsers();
         };
 
         fetchUsersAsync();
-    }, []);
+    }, [session]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
