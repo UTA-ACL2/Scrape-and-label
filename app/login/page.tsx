@@ -35,7 +35,7 @@ export default function Page({searchParams} : PageProps) {
             username: inputs.username,
             password: inputs.password,
             redirect:true,
-            callbackUrl: '/webapps/anivoice'
+            callbackUrl: 'http://redgiant.uta.edu/webapps/anivoice/'
         });
         setIsLoading(false); // Set isLoading to false when the request ends
     }
