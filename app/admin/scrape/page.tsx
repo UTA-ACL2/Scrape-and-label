@@ -63,7 +63,7 @@ export default function Page() {
     const [selectedUserId,
         setselectedUserId] = useState("");
     const fetchUsers = async() => {
-        const response = await api.get('/api/admin/users/getActive');
+        const response = await api.get('/webapps/anivoice/api/admin/users/getActive');
         setUsers(response.data);
     };
     const [selectedKeywordGroupToAssign,
@@ -77,7 +77,7 @@ export default function Page() {
             alert('Please select a user');
             return;
         }
-        const response = await api.post('/api/admin/users/assign', {
+        const response = await api.post('/webapps/anivoice/api/admin/users/assign', {
             userId: selectedUserId,
             assignAmount,
             keywordGroupId: selectedKeywordGroupToAssign
@@ -105,7 +105,7 @@ export default function Page() {
             ?.user.role === 'admin' || session
                 ?.user.role === 'usurper')) 
             return;
-        const response = await api.post('/api/admin/users/cookie', {
+        const response = await api.post('/webapps/anivoice/api/admin/users/cookie', {
             cookie: Cookie,
             userId: session
                 ?.user.id
@@ -119,7 +119,7 @@ export default function Page() {
 
     useEffect(() => {
         const fetchCookie = async() => {
-            const response = await fetch(`/api/admin/users/cookie?userId=${session
+            const response = await fetch(`/webapps/anivoice/api/admin/users/cookie?userId=${session
                 ?.user.id}`);
             if (response.ok) {
                 const data = await response.json();
@@ -140,7 +140,7 @@ export default function Page() {
     }, [session]);
 
     const fetchKeywords = async() => {
-        const response = await api.get('/api/admin/keywords/list');
+        const response = await api.get('/webapps/anivoice/api/admin/keywords/list');
         if (response.status === 200) {
             setKeywords([
                 {
@@ -160,7 +160,7 @@ export default function Page() {
         if (keywords
             ?.length === 0) {
             const fetchKeywordGroups = async() => {
-                const response = await api.get('/api/admin/keywords/group/list');
+                const response = await api.get('/webapps/anivoice/api/admin/keywords/group/list');
                 if (response.status === 200) {
                     setKeywordGroups([
                         {
@@ -179,7 +179,7 @@ export default function Page() {
     }, []);
 
     const addKeyword = async() => {
-        const response = await api.post('/api/admin/keywords/add', {keyword, keywordGroupId: keywordSupersetid});
+        const response = await api.post('/webapps/anivoice/api/admin/keywords/add', {keyword, keywordGroupId: keywordSupersetid});
         if (response.status === 200) {
             setKeywords((prevKeywords : any) => [
                 ...prevKeywords,
@@ -191,7 +191,7 @@ export default function Page() {
     };
 
     const addGroup = async() => {
-        const response = await api.post('/api/admin/keywords/group/add', {keywordSuperset});
+        const response = await api.post('/webapps/anivoice/api/admin/keywords/group/add', {keywordSuperset});
         if (response.status === 200) {
             setKeywordGroups((prevKeywords : any) => [
                 ...prevKeywords,
@@ -203,7 +203,7 @@ export default function Page() {
     };
 
     const removeKeyword = async() => {
-        const response = await api.delete(`/api/admin/keywords/remove?keyword=${dropDown}`);
+        const response = await api.delete(`/webapps/anivoice/api/admin/keywords/remove?keyword=${dropDown}`);
         if (response.status === 200) {
             setKeywords((prevKeywords : any) => (prevKeywords || []).filter((keyword : any) => keyword.name !== dropDown));
         } else {
@@ -225,7 +225,7 @@ export default function Page() {
     };
     const showItemsbyGroup = async(selectedKeywordGroup:any) => {
         if(!selectedKeywordGroup) return;
-        const response = await api.get(`/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`);
+        const response = await api.get(`/webapps/anivoice/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`);
         setItems(response.data);
     }
     const handleShowScrappedBygroup = async(selectedKeywordGroup : any) => {
@@ -247,7 +247,7 @@ export default function Page() {
         setIsLoading(true);
         let keyword = dropDown;
         try {
-            const response = await api.post('/api/admin/scrape', {
+            const response = await api.post('/webapps/anivoice/api/admin/scrape', {
                 keyword,
                 userId: session
                     ?.user.id,

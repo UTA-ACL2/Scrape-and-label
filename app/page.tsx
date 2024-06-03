@@ -43,7 +43,7 @@ export default function Page() {
             if(!session){
                 return;
             }
-            const response = await api.get(`api/fetch?userID=${session?.user.id}`, {
+            const response = await api.get(`/webapps/anivoiceapi/fetch?userID=${session?.user.id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ export default function Page() {
         }
         try {
             console.log(jsondata)
-            const response = await api.post(`/api/${category}`, jsondata, {
+            const response = await api.post(`/webapps/anivoice/api/${category}`, jsondata, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -123,22 +123,22 @@ export default function Page() {
         };
     }, []);
 
-    const handleDownload = async(e : any) => {
-        e.preventDefault();
-        fetch('http://localhost:8080/get_reviewed_results', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            cache: 'no-cache'
-        }).then(async(e) => {
-            const staticData = await e
-                ?.json();
-            console.log(staticData);
-            setcsvData(staticData);
-            setDownload(true);
-        });
-    };
+    // const handleDownload = async(e : any) => {
+    //     e.preventDefault();
+    //     fetch('http://localhost:8080/get_reviewed_results', {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         cache: 'no-cache'
+    //     }).then(async(e) => {
+    //         const staticData = await e
+    //             ?.json();
+    //         console.log(staticData);
+    //         setcsvData(staticData);
+    //         setDownload(true);
+    //     });
+    // };
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">

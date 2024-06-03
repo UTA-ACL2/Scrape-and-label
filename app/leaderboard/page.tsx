@@ -12,7 +12,7 @@ export default function Page() {
         setUsers] = useState < User[] > ([]);
 
     useEffect(() => {
-        fetch('/api/leaderboard')
+        fetch('/webapps/anivoice/leaderboard')
             .then(response => response.json())
             .then(data => setUsers(data.message));
     }, []);
