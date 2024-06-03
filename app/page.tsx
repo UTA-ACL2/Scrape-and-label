@@ -43,7 +43,7 @@ export default function Page() {
             if(!session){
                 return;
             }
-            const response = await api.get(`/webapps/anivoiceapi/fetch?userID=${session?.user.id}`, {
+            const response = await api.get(`/webapps/anivoice/api/fetch?userID=${session?.user.id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
