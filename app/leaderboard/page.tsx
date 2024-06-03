@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import api from '../api/api';
 
 type User = {
@@ -22,6 +22,8 @@ export default function Page() {
         if (response.status !== 200) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        console.log(response)
+        console.log(response.data)
         const staticData = response.data;
         setUsers(staticData.message);
     }
