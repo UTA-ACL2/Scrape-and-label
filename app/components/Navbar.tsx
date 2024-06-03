@@ -33,7 +33,7 @@ const Navbar = () => {
   useEffect(() => {
     const connect = async () => {
       if (!loading && !session) {
-          router.push("/login");
+          router.push("/webapps/anivoice/login");
       }
   };
     connect();
@@ -52,12 +52,12 @@ const Navbar = () => {
       <div
         className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
         <div className='ml-1'>AniVoice</div>
-        {pathname === '/login' && <div>Login Page</div>}
+        {pathname === '/webapps/anivoice/login' && <div>Login Page</div>}
         <div></div>
       </div>
     )}
 
-    {!loading && !(pathname === '/login') && session && (
+    {!loading && !(pathname === '/webapps/anivoice/login') && session && (
   <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
   <div className="flex items-center space-x-2">
     <span className="text-lg font-bold ">Welcome,</span>
