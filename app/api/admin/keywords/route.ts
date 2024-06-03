@@ -9,7 +9,7 @@ import getDatabase from "@/database/database";
 export async function GET(request : NextRequest) {
     const params = new URLSearchParams(request.nextUrl.search);
     const keywordGroupId = params.get('keywordGroupId');
-    
+
     if (!keywordGroupId) {
         return NextResponse.json({message: 'keywordGroupId is not provided'});
     }
@@ -31,9 +31,10 @@ export async function GET(request : NextRequest) {
             $in: keywordIds
         }
     })
-        .populate('createdBy', 'username')
-        .populate('keyword', 'keyword')
-        .populate('assignedTo', 'username');
+        .populate({path: 'createdBy', select: 'username'})
+        .populate({path: 'keyword', select: 'keyword'})
+        .populate({path: 'assignedTo', select: 'username'});
+
     const nullAssignedCount = allItems.reduce((count, item) => {
         return item.assignedTo === null
             ? count + 1
@@ -57,7 +58,7 @@ export async function GET(request : NextRequest) {
         "assignedTo": item.assignedTo
             ? item.assignedTo.username
             : null,
-        "keywordGroup": item.keywordGroup,
+        "keywordGroup": item.keywordGroup
     }));
 
     return NextResponse.json(formattedItems);

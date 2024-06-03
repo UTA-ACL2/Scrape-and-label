@@ -5,7 +5,7 @@ import keywords from '@/models/keywordModel';
 import {scrape} from '../../scrape';
 import {ObjectId} from 'mongodb';
 import getDatabase from "@/database/database";
-
+import keywordGroupModel from '@/models/keywordGroupModel';
 
 export async function POST(request : NextRequest) {
     await getDatabase();
@@ -24,7 +24,10 @@ export async function POST(request : NextRequest) {
         .findOne({
         _id: new ObjectId(keyword as string)
     })
-        .populate('superset');
+        .populate({
+            path: 'superset',
+            model: keywordGroupModel
+        });
     if (!keywordobject) {
         return NextResponse.json({
             message: 'Keyword does not exists'
