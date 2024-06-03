@@ -10,7 +10,8 @@ export async function GET(request : NextRequest) {
         await getDatabase();
         const allItems = await keyword
             .find({})
-            .populate('superset', keywordGroupModel);
+            .populate('superset', keywordGroupModel)
+            .exec();
         const formattedItems = allItems.map((item, index) => ({
             "id": item._id,
             "name": item.keyword,
