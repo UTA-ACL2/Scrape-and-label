@@ -31,7 +31,7 @@ export const authOptions : NextAuthOptions = {
         },
     },
     pages: {
-        signIn: '/login'
+        signIn: '/webapps/anivoice/api/auth/login'
     },
     providers: [Credentials({
             name: "Credentials",
