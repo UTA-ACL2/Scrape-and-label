@@ -145,7 +145,6 @@ export default function Page() {
         }
     });
         if (response.status === 200) {
-            console.log(response.data)
             setKeywords([
                 {
                     "name": "Select",
@@ -165,6 +164,7 @@ export default function Page() {
             'Content-Type': 'application/json'
         }
     });
+            console.log(response)
         if (response.status === 200) {
             console.log(response.data)
             setKeywordGroups([
@@ -179,6 +179,7 @@ export default function Page() {
         }
     };
 useEffect(() => {
+    if(!session) return;
     // const connect = async() => {     await connectToDatabase(); }; connect();
     async function fetchData() {
         await fetchKeywordGroups();
@@ -188,7 +189,7 @@ useEffect(() => {
     if (keywords?.length === 0) {
         fetchData();
     }
-}, []);
+}, [session]);
 
     const addKeyword = async() => {
         const response = await api.post('/webapps/anivoice/api/admin/keywords/add', {keyword, keywordGroupId: keywordSupersetid});

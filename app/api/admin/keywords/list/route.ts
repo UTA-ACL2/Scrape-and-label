@@ -20,7 +20,7 @@ export async function GET(request : NextRequest) {
             "supersetid": item.superset
         }));
         return NextResponse.json(formattedItems);
-    } catch (error) {
-        return NextResponse.json({error: error});
+    } catch (error:any) {
+        return NextResponse.json({error: error.message});
     }
 }
