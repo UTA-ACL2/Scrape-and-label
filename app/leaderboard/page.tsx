@@ -28,7 +28,11 @@ export default function Page() {
         setUsers(staticData.message);
     }
     useEffect(() => {
-        fetchUsers();
+        const fetchUsersAsync = async () => {
+            await fetchUsers();
+        };
+
+        fetchUsersAsync();
     }, []);
 
     return (
