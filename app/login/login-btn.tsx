@@ -15,6 +15,6 @@ export default function LoginButton({ session, loading }: { session: any, loadin
         )
     }
     return (
-            <button onClick={() => router.push('/webapps/anivoice/login')}>Sign in</button>
+            <button onClick={() => router.push('/login')}>Sign in</button>
     )
 }

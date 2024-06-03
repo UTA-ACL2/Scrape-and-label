@@ -12,7 +12,7 @@ export default function DatabaseConnectionProvider({children} : DatabaseConnecti
     useEffect(() => {
         const connectToDatabase = async() => {
             try {
-                const response = await fetch('/webapps/anivoice/api/connect');
+                const response = await fetch('/api/connect');
                 if (response.ok) {
                     setDbConnected(true);
                 } else {

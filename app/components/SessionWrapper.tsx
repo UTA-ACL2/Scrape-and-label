@@ -6,7 +6,7 @@ import React from 'react'
 
 const SessionWrapper = ({children}: {children: React.ReactNode}) => {
   return (
-    <SessionProvider  basePath={`/webapps/anivoice/api/auth`}>{children}</SessionProvider>
+    <SessionProvider  basePath={`/api/auth`}>{children}</SessionProvider>
   )
 }
 

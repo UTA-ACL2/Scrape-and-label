@@ -14,7 +14,7 @@ export default function Page() {
         setUsers] = useState < any[] > ([]);
     const {data: session, status} = useSession();
     const fetchUsers = async() => {
-        const response = await api.get(`/webapps/anivoice/api/leaderboard`, {
+        const response = await api.get(`/api/leaderboard`, {
             headers: {
                 'Content-Type': 'application/json'
             }

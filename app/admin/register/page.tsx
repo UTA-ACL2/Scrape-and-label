@@ -25,7 +25,7 @@ export default function Page() {
 
     const handleSubmit = async(event : any) => {
         event.preventDefault();
-        const response = await api.post('/webapps/anivoice/api/admin/register', {username, password, role});
+        const response = await api.post('/api/admin/register', {username, password, role});
         if (response.status === 200) {
             // Redirect to the login page after successful registration
             fetchUsers();
@@ -36,7 +36,7 @@ export default function Page() {
     };
 
     const fetchUsers = async() => {
-        const response = await api.get('/webapps/anivoice/api/admin/users');
+        const response = await api.get('/api/admin/users');
         setUsers(response.data);
     };
 
@@ -45,7 +45,7 @@ export default function Page() {
     }, []);
 
     const handleToggleActive = async(userId : any) => {
-        const response = await api.post('/webapps/anivoice/api/admin/users/toggleActive', {userId});
+        const response = await api.post('/api/admin/users/toggleActive', {userId});
         if (response.status === 200) {
             // Update the users state
             setUsers(users.map(user => user._id === userId

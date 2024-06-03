@@ -43,7 +43,7 @@ export default function Page() {
             if(!session){
                 return;
             }
-            const response = await api.get(`/webapps/anivoice/api/fetch?userID=${session?.user.id}`, {
+            const response = await api.get(`/api/fetch?userID=${session?.user.id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ export default function Page() {
         }
         try {
             console.log(jsondata)
-            const response = await api.post(`/webapps/anivoice/api/${category}`, jsondata, {
+            const response = await api.post(`/api/${category}`, jsondata, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

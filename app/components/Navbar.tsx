@@ -18,7 +18,7 @@ const Navbar = () => {
   useEffect(() => {
     const connect = async () => {
       if (!loading && !session) {
-          router.push("http://redgiant.uta.edu/webapps/anivoice/login");
+          router.push("/login");
       }
   };
     connect();
@@ -37,33 +37,33 @@ const Navbar = () => {
       <div
         className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
         <div className='ml-1'>AniVoice</div>
-        {pathname === '/webapps/anivoice/login' && <div>Login Page</div>}
+        {pathname === '/login' && <div>Login Page</div>}
         <div></div>
       </div>
     )}
 
-    {!loading && !(pathname === '/webapps/anivoice/login') && session && (
+    {!loading && !(pathname === '/login') && session && (
   <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
   <div className="flex items-center space-x-2">
     <span className="text-lg font-bold ">Welcome,</span>
     <span className="text-lg font-bold text-gray-900">{session.user?.name || ""}</span>
     <span className="text-sm font-light text-white-500">({session.user?.role})</span>
   </div>
-    <Link href="/webapps/anivoice/">
+    <Link href="/">
         <span className="text-lg font-bold">AniVoice</span>
     </Link>
-    {!(pathname === '/webapps/anivoice/leaderboard') && (
-    <Link href="/webapps/anivoice/leaderboard">
+    {!(pathname === '/leaderboard') && (
+    <Link href="/leaderboard">
       <span className="text-lg font-bold">leaderboard</span>
     </Link>
   )}
 
     {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
       <>
-      <Link href="/webapps/anivoice/admin/register">
+      <Link href="/admin/register">
         <span className="text-lg">Add Accounts</span>
       </Link>
-        <Link href="/webapps/anivoice/admin/scrape">
+        <Link href="/admin/scrape">
         <span className="text-lg">Scrape</span>
       </Link>
       </>

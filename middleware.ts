@@ -13,8 +13,8 @@ async function middleware(req) {
     const isAuthenticated = !!(req
         ?.nextauth
             ?.token);
-    const isPublicRoute = req.nextUrl.pathname.startsWith('/webapps/anivoice/login');
-    const isAdminRoute = req.nextUrl.pathname.startsWith('/webapps/anivoice/api/admin') || req.nextUrl.pathname.startsWith('/webapps/anivoice/admin');
+    const isPublicRoute = req.nextUrl.pathname.startsWith('/login');
+    const isAdminRoute = req.nextUrl.pathname.startsWith('/api/admin') || req.nextUrl.pathname.startsWith('/admin');
     if (!isAuthenticated && !isPublicRoute) {
         console.log(url.pathname, "middleware url pathname before")
         url.pathname = '/login';
@@ -47,5 +47,5 @@ export const config = {
        * - favicon.ico (favicon file)
        * - login (login route)
        */
-        '/webapps/anivoice/((?!_next/static|_next/image|favicon.ico|login).*)']
+        '/((?!_next/static|_next/image|favicon.ico|login).*)']
 }
