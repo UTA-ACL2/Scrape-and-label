@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
+import {NextApiRequest, NextApiResponse} from "next";
+import {authOptions} from "./options";
 
-import { authOptions } from "./options";
-
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+export default function auth(req : NextApiRequest, res : NextApiResponse) {
+    req.headers["x-forwarded-host"] = process.env.NEXTAUTH_URL;
+    return NextAuth(req, res, authOptions);
+}
