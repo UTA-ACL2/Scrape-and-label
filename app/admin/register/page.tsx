@@ -22,21 +22,6 @@ export default function Page() {
         setdb] = useState < any > (null);
     const [users,
     setUsers] = useState < User[] > ([]);
-    // const connectToDatabase = async() => {
-    //     try {
-    //         let response = await fetch('/api/connect');
-    //         return true;
-    //     } catch (error) {
-    //         return error;
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     const connect = async() => {
-    //         await connectToDatabase();
-    //     };
-    //     connect();
-    // }, [])
 
     const handleSubmit = async(event : any) => {
         event.preventDefault();

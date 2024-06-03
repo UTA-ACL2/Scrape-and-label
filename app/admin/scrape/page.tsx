@@ -117,20 +117,20 @@ export default function Page() {
         };
     };
 
+    const fetchCookie = async() => {
+        const response = await fetch(`/webapps/anivoice/api/admin/users/cookie?userId=${session
+            ?.user.id}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (!data
+                ?.cookie) 
+                return;
+            setCookie(data.cookie);
+        } else {
+            console.error('Failed to fetch cookie');
+        }
+    };
     useEffect(() => {
-        const fetchCookie = async() => {
-            const response = await fetch(`/webapps/anivoice/api/admin/users/cookie?userId=${session
-                ?.user.id}`);
-            if (response.ok) {
-                const data = await response.json();
-                if (!data
-                    ?.cookie) 
-                    return;
-                setCookie(data.cookie);
-            } else {
-                console.error('Failed to fetch cookie');
-            }
-        };
 
         if (session
             ?.user.role === 'admin' || session
@@ -155,24 +155,24 @@ export default function Page() {
             console.error('Failed to fetch keywords');
         }
     };
+    const fetchKeywordGroups = async() => {
+        const response = await api.get('/webapps/anivoice/api/admin/keywords/group/list');
+        if (response.status === 200) {
+            setKeywordGroups([
+                {
+                    "name": "Select",
+                    "id": ""
+                },
+                ...response.data
+            ]);
+        } else {
+            console.error('Failed to fetch keywords groups');
+        }
+    };
     useEffect(() => {
         // const connect = async() => {     await connectToDatabase(); }; connect();
         if (keywords
             ?.length === 0) {
-            const fetchKeywordGroups = async() => {
-                const response = await api.get('/webapps/anivoice/api/admin/keywords/group/list');
-                if (response.status === 200) {
-                    setKeywordGroups([
-                        {
-                            "name": "Select",
-                            "id": ""
-                        },
-                        ...response.data
-                    ]);
-                } else {
-                    console.error('Failed to fetch keywords groups');
-                }
-            };
             fetchKeywordGroups();
             fetchKeywords();
         }
