@@ -242,7 +242,9 @@ useEffect(() => {
     };
     const showItemsbyGroup = async(selectedKeywordGroup:any) => {
         if(!selectedKeywordGroup) return;
-        const response = await api.get(`/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`);
+        const response = await api.get(`/api/admin/keywords?keywordGroupId=${selectedKeywordGroup}`, {
+  timeout: 500000
+});
         setItems(response.data);
     }
     const handleShowScrappedBygroup = async(selectedKeywordGroup : any) => {

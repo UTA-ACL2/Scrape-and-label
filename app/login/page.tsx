@@ -1,7 +1,7 @@
 "use client";
-import {signIn} from "next-auth/react";
-import {ChangeEvent, FormEvent, useState} from "react";
-
+import {ChangeEvent, FormEvent, useState, useEffect} from "react";
+import {useRouter} from 'next/navigation';
+import {useSession, signIn, signOut} from "next-auth/react";
 type LoginInput = {
     username: string;
     password: string;
@@ -18,7 +18,17 @@ export default function Page({searchParams} : PageProps) {
         setInputs] = useState < LoginInput > ({username: "", password: ""});
     const [isLoading,
         setIsLoading] = useState(false); 
-        
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loading && session) {
+            router.push("/");
+        }
+    }, [session, loading]);
+
     const handleChange = (event : ChangeEvent < HTMLInputElement >) => {
         const name = event.target.name;
         const value = event.target.value;

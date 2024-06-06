@@ -33,7 +33,7 @@ export async function GET(request : NextRequest) {
     })
         .populate({path: 'createdBy', select: 'username'})
         .populate({path: 'keyword', select: 'keyword'})
-        .populate({path: 'assignedTo', select: 'username'});
+        .populate({path: 'assignedTo', select: 'username'}).limit(1400);
 
     const nullAssignedCount = allItems.reduce((count, item) => {
         return item.assignedTo === null
