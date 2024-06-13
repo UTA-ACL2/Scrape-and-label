@@ -1,11 +1,9 @@
-'use client'
-import { useState, useEffect } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
-import LoginButton from '../login/login-btn';
-import { useRouter,usePathname } from "next/navigation";
+'use client';
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 import Link from 'next/link';
-import path from "path";
-
+import LoginButton from '../login/login-btn';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -13,68 +11,62 @@ const Navbar = () => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
 
-
-
   useEffect(() => {
     const connect = async () => {
       if (!loading && !session) {
-          router.push("/login");
+        router.push("/login");
       }
-  };
+    };
     connect();
   }, [loading]);
 
-
-
-
-
-
   return (
+    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white shadow-lg">
+      {loading || (!session) && (
+        <div className="flex justify-between items-center text-xl font-bold py-4 px-8">
+          <div className="ml-1 text-2xl">AniVoice</div>
+          {pathname === '/login' && <div>Login Page</div>}
+        </div>
+      )}
 
-    <div>
-
-    {loading || (!session ) && (
-      <div
-        className="flex justify-between items-center text-xl font-bold py-4 bg-blue-500 text-white">
-        <div className='ml-1'>AniVoice</div>
-        {pathname === '/login' && <div>Login Page</div>}
-        <div></div>
-      </div>
-    )}
-
-    {!loading && !(pathname === '/login') && session && (
-  <div className="flex justify-between items-center p-4 bg-blue-500 text-white">
-  <div className="flex items-center space-x-2">
-    <span className="text-lg font-bold ">Welcome,</span>
-    <span className="text-lg font-bold text-gray-900">{session.user?.name || ""}</span>
-    <span className="text-sm font-light text-white-500">({session.user?.role})</span>
-  </div>
-    <Link href="/">
-        <span className="text-lg font-bold">AniVoice</span>
-    </Link>
-    {!(pathname === '/leaderboard') && (
-    <Link href="/leaderboard">
-      <span className="text-lg font-bold">leaderboard</span>
-    </Link>
-  )}
-
-    {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
-      <>
-      <Link href="/admin/register">
-        <span className="text-lg">Add Accounts</span>
-      </Link>
-        <Link href="/admin/scrape">
-        <span className="text-lg">Scrape</span>
-      </Link>
-      </>
-    ) : null}
-    <div>
-      <LoginButton session={session} loading={loading}/>
+      {!loading && !(pathname === '/login') && session && (
+        <div className="flex justify-between items-center py-4 px-8">
+          <Link href="/">
+            <span className="text-2xl font-bold cursor-pointer hover:text-blue-200 transition duration-300">AniVoice</span>
+          </Link>
+          <div className="flex space-x-8">
+            <div className="dropdown dropdown-hover">
+              <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Home</div>
+              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52">
+                <li><Link href="/home-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Home Option 1</span></Link></li>
+                <li><Link href="/home-option2"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Home Option 2</span></Link></li>
+                <li><Link href="/home-option3"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Home Option 3</span></Link></li>
+              </ul>
+            </div>
+            <div className="dropdown dropdown-hover">
+              <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Upload</div>
+              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52">
+                <li><Link href="/upload-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 1</span></Link></li>
+                <li><Link href="/upload-option2"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 2</span></Link></li>
+                <li><Link href="/upload-option3"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 3</span></Link></li>
+              </ul>
+            </div>
+            {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
+              <div className="dropdown dropdown-hover">
+                <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Admin</div>
+                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52">
+                  <li><Link href="/admin/register"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Add Accounts</span></Link></li>
+                  <li><Link href="/admin/scrape"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Scrape</span></Link></li>
+                </ul>
+              </div>
+            ) : null}
+          </div>
+          <div>
+            <LoginButton session={session} loading={loading} />
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-    </div>
-
   );
 };
 
