@@ -36,19 +36,27 @@ const Navbar = () => {
           </Link>
           <div className="flex space-x-8">
             <div className="dropdown dropdown-hover">
-              <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Home</div>
+              <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Leaderboard</div>
               <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52">
-                <li><Link href="/home-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Home Option 1</span></Link></li>
+                <li><Link href="/leaderboard"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Leaderboard</span></Link></li>
+
+                {/* Add more options here
                 <li><Link href="/home-option2"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Home Option 2</span></Link></li>
                 <li><Link href="/home-option3"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Home Option 3</span></Link></li>
+                */}
+
               </ul>
             </div>
             <div className="dropdown dropdown-hover">
               <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Upload</div>
               <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52">
-                <li><Link href="/upload-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 1</span></Link></li>
+                <li><Link href="/upload-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload video</span></Link></li>
+
+                {/* Add more upload options here}
                 <li><Link href="/upload-option2"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 2</span></Link></li>
                 <li><Link href="/upload-option3"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 3</span></Link></li>
+                */}
+
               </ul>
             </div>
             {session.user?.role === 'usurper' || session.user?.role === 'admin' ? (
