@@ -109,6 +109,15 @@ export default function Page() {
     
     };
 
+    const convertToB64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => resolve(fileReader.result as string);
+            fileReader.onerror = (error) => reject(error);
+        });
+    };
+
     const handleFileUpload = async(e:any) => {
         const file = e.target.files[0];
         const base64: any = await convertToB64(file)
@@ -235,19 +244,4 @@ export default function Page() {
             </div>
         </div>
     );
-}
-
-function convertToB64(file:any){
-    return new Promise((resolve, reject) =>{
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
-        fileReader.onload = () =>{
-            resolve(fileReader.result as string)
-        };
-        fileReader.onerror = (error) => {
-            reject(error)
-        }
-    }
-
-    )
 }
