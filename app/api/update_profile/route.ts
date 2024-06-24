@@ -4,7 +4,7 @@ import User from '@/models/userModel';
 import getDatabase from "@/database/database";
 import { authOptions } from '../auth/[...nextauth]/options';
 import { getToken } from 'next-auth/jwt';
-import bcrypt from 'bcryptjs';
+
 export async function POST(req: NextRequest ) {
     
     try {
@@ -25,11 +25,7 @@ export async function POST(req: NextRequest ) {
         }
         
         if (body.username) user.username = body.username
-        console.log(body.password)
-        if (body.password && !bcrypt.compareSync(body.password, user.password)) {
-            console.log(bcrypt.compareSync(body.password, user.password))
-            user.password = await bcrypt.hash(body.password, 12)
-        }
+        if (body.password) user.password = body.password
         if (body.avatar) user.avatar = body.avatar
         await user.save();
 
