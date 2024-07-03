@@ -8,6 +8,12 @@ import {userService} from "../../../../auth/userService";
 type User = NextAuthUser & { role?: string, type?: string, providerAccountId?: string };
 // Extend the session.user type to include a role property
 
+import GoogleProvider from "next-auth/providers/google";
+import { MongoDBAdapter } from "@auth/mongodb-adapter"
+import getDatabase from "@/database/database";
+import User from "@/models/userModel";
+
+
 export const authOptions : NextAuthOptions = {
     session: {
         strategy: "jwt"
@@ -29,11 +35,51 @@ export const authOptions : NextAuthOptions = {
             }
             return session;
         },
+        async signIn({account, profile}){
+            console.log("IN SIGN IN PAGE")
+            console.log(account)
+            console.log(profile)
+            if(account?.provider != 'google'){
+                return true
+
+            }
+            if(!profile?.email){
+                console.log("PROFILE ERROR")
+                throw new Error('Profile Error')
+            }
+            await getDatabase();
+            const existingUser = await User.findOne({email: profile.email})
+            if(existingUser){
+                console.log("Existing user")
+                console.log(existingUser)
+                if(existingUser.username != profile.name) {
+                    console.log("ggg")
+                    existingUser.username = profile.name!
+                    await existingUser.save()
+                }
+            }else{
+                console.log("Trying to add to database")
+                const username = profile.name
+                const email = profile.email
+                const password = ""
+                const role = "student"
+                console.log("Before creating user")
+                const user = new User({ username, password, role, email});
+                console.log(user)
+                await user.save();
+            }
+            return true
+
+        },
     },
     pages: {
         signIn: '/login'
     },
-    providers: [Credentials({
+    providers: [GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+      }),
+        Credentials({
             name: "Credentials",
             credentials: {
                 username: {
@@ -51,6 +97,7 @@ export const authOptions : NextAuthOptions = {
                     username : string
                     password : string
                 };
+                console.log(password)
 
                 const response = await userService.authenticate(username, password);
 

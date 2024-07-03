@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import User from '@/models/userModel';
 import getDatabase from "@/database/database";
+import { sendEmail } from '../../verifyemail/route';
 
 export async function POST(request: NextRequest) {
     await getDatabase();
@@ -9,8 +10,9 @@ export async function POST(request: NextRequest) {
         username,
         password,
         role,
+        email,
     } = body;
-
+    console.log('in reg ')
     // Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -18,8 +20,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Create a new user
-    const user = new User({ username, password, role });
+    console.log("About to create new user")
+    console.log(body)
+    const user = new User({ username, password, role , email});
     await user.save();
+   
+    await sendEmail({email, userId: user._id})
+
 
     return NextResponse.json({ message: 'User registered successfully' });
 }

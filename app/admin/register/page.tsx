@@ -8,6 +8,7 @@ type User = {
     username: string;
     role: string;
     isActive: boolean;
+    email: string;
 };
 
 export default function Page() {
@@ -18,6 +19,8 @@ export default function Page() {
         setPassword] = useState('');
     const [role,
         setRole] = useState('student');
+    const [email, 
+        setEmail] = useState(''); 
     const [db,
         setdb] = useState < any > (null);
     const [users,
@@ -25,7 +28,8 @@ export default function Page() {
 
     const handleSubmit = async(event : any) => {
         event.preventDefault();
-        const response = await api.post('/api/admin/register', {username, password, role});
+        console.log(email)
+        const response = await api.post('/api/admin/register', {username, password, role, email});
         if (response.status === 200) {
             // Redirect to the login page after successful registration
             fetchUsers();
@@ -80,6 +84,7 @@ export default function Page() {
                         <th>Username</th>
                         <th>Role</th>
                         <th>Active</th>
+                        <th>Email</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -107,6 +112,13 @@ export default function Page() {
                                 placeholder="Password"/>
                         </td>
                         <td>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Email"/>
+                        </td>
+                        <td>
                             <button onClick={handleSubmit}>Register</button>
                         </td>
                     </tr>
@@ -129,6 +141,7 @@ export default function Page() {
                         </tr>
                     ))}
                 </tbody>
+
             </table>
         </div>
     );
