@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 interface IUser {
     username: string;
     password: string;
-    role: 'admin' | 'student' | 'usurper';
+    role: 'admin' | 'student' | 'usurper' | 'user';
     isActive: boolean;
     createdAt: Date;
     youtubeCookie: string;
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     youtubeCookie: String,
     role: {
         type: String,
-        enum: ['admin', 'student', 'usurper'],
+        enum: ['admin', 'student', 'usurper', 'user'],
         default: 'student'
     },
     isActive: {
