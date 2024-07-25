@@ -2,6 +2,7 @@
 import {ChangeEvent, FormEvent, useState, useEffect} from "react";
 import {useRouter} from 'next/navigation';
 import {useSession, signIn, signOut} from "next-auth/react";
+import Link from 'next/link';
 import { toast } from 'react-toastify';
 
 type LoginInput = {
@@ -112,6 +113,12 @@ export default function Page({searchParams} : PageProps) {
                         Login failed.
                     </p>
                 )}
+                <p className="mt-10 text-center text-sm text-gray-500">
+                    Don't have an account?{' '}
+                    <Link href="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                        Register here
+                    </Link>
+                </p>
             </form>
 
         </div>
