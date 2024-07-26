@@ -25,6 +25,18 @@ export default function Page() {
         setdb] = useState < any > (null);
     const [users,
     setUsers] = useState < User[] > ([]);
+    const [isValidEmail, setIsValidEmail] = useState(true);
+
+    const validateEmail = (email:any) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const handleEmailChange = (e:any) => {
+        const newEmail = e.target.value;
+        setEmail(newEmail);
+        setIsValidEmail(validateEmail(newEmail));
+    };
 
     const handleSubmit = async(event : any) => {
         event.preventDefault();
@@ -115,8 +127,11 @@ export default function Page() {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Email"/>
+                                onChange={handleEmailChange}
+                                placeholder="Email"
+                                style={{ borderColor: isValidEmail ? 'initial' : 'red' }}
+                            />
+                            {!isValidEmail && <span style={{ color: 'red' }}>Invalid email address</span>}
                         </td>
                         <td>
                             <button onClick={handleSubmit}>Register</button>

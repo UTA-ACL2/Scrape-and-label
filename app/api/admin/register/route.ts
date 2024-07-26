@@ -11,8 +11,9 @@ export async function POST(request: NextRequest) {
         password,
         role,
         email,
+        provider
     } = body;
-    console.log('in reg ')
+    
     // Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -22,7 +23,8 @@ export async function POST(request: NextRequest) {
     // Create a new user
     console.log("About to create new user")
     console.log(body)
-    const user = new User({ username, password, role , email});
+    const user = new User({ username, password, role , email, provider});
+    console.log(user)
     await user.save();
    
     await sendEmail({email, userId: user._id})

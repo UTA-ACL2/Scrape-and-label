@@ -36,22 +36,22 @@ export const sendEmail = async({email, userId}:any) =>{
         const tok = await bcryptjs.hash(userId.toString(), 12)
         await User.findByIdAndUpdate(userId, {verificationToken: tok})
         var transport = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525,
+            service: 'gmail',
+            host:'smtp.gmail.com',
+            port:587,
             auth: {
-              user: process.env.EMAIL_USER,
-              pass: process.env.EMAIL_PASS
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
             }
-          });
-
+        });
+        
         const emailContent = {
-            from: 'barshan02@gmail.com',
+            from: process.env.GMAIL_USER,
             to: email,
             subject: "Verify Account",
-            html:`<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${tok}">here</a> to verify account.
-                 or copy and paste the link.<br>${process.env.NEXTAUTH_URL}/verifyemail?token=${tok}</p>`
-
-        }
+            html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${tok}">here</a> to verify account.
+                  or copy and paste the link.<br>${process.env.DOMAIN}/verifyemail?token=${tok}</p>`
+        };
         const emailResponse = await transport.sendMail(emailContent);
         return emailResponse;   
 

@@ -14,6 +14,7 @@ interface IUser {
     verified: boolean
     verificationToken: string | undefined
     email: string
+    provider: string
 }
 
 interface IUserDocument extends IUser, Document {
@@ -24,7 +25,10 @@ const userSchema = new mongoose.Schema<IUserDocument>({
         type: String,
         unique: true,
     },
-    password: String,
+    password: {
+        type: String,
+        required: false
+    },
     youtubeCookie: String,
     role: {
         type: String,
@@ -46,10 +50,15 @@ const userSchema = new mongoose.Schema<IUserDocument>({
     avatar: String,
     verified: {
         type: Boolean,
-        default: false
+        default: false,
+        
     },
     verificationToken: String,
-    email: String
+    email: String,
+    provider: {
+        type: String,
+        default: 'Credentials'
+    },
 });
 
 userSchema.methods.validatePassword = function(password: string) {

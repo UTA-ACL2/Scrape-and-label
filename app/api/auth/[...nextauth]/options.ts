@@ -61,10 +61,11 @@ export const authOptions : NextAuthOptions = {
                 console.log("Trying to add to database")
                 const username = profile.name
                 const email = profile.email
-                const password = ""
-                const role = "student"
+                
+                const role = "usurper"
+                const provider = 'Google'
                 console.log("Before creating user")
-                const user = new User({ username, password, role, email});
+                const user = new User({ username: username,role: role, email: email, provider: provider, verified: true});
                 console.log(user)
                 await user.save();
             }
