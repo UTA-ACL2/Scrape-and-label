@@ -101,6 +101,7 @@ export default function Page() {
                                 <option value="student">Student</option>
                                 <option value="admin">Admin</option>
                                 <option value="usurper">usurper</option>
+                                <option value="user">user</option>
                             </select>
                         </td>
                         <td>

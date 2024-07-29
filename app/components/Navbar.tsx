@@ -51,12 +51,14 @@ const Navbar = () => {
             <div className="dropdown dropdown-hover">
               <div tabIndex={0} role="button" className="btn m-1 bg-blue-700 hover:bg-blue-600 text-white border-none rounded-full px-4 py-2 transition duration-300">Upload</div>
               <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52">
-                <li><Link href="/upload-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload video</span></Link></li>
+                {/*<li><Link href="/upload-option1"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload video</span></Link></li>
 
                 {/* Add more upload options here}
                 <li><Link href="/upload-option2"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 2</span></Link></li>
                 <li><Link href="/upload-option3"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload Option 3</span></Link></li>
                 */}
+                <li><Link href="/upload"><span className="block px-4 py-2 text-blue-800 hover:bg-blue-100">Upload video</span></Link></li>
+
 
               </ul>
             </div>
@@ -72,8 +74,8 @@ const Navbar = () => {
           </div>
           <div className="flex items-center">
             <div className="flex items-center mr-4">
-              <span className="text-sm font-light mr-2">Welcome, {session.user?.name || ""}</span>
-              <span className="text-xs text-blue-300">({session.user?.role})</span>
+         {/*     <span className="text-sm font-light mr-2">Welcome, {session.user?.name || ""}</span>
+              <span className="text-xs text-blue-300">({session.user?.role})</span> */}
             </div>
           <LoginButton session={session} loading={loading} />
         </div>
