@@ -13,7 +13,7 @@ async function middleware(req) {
     const isAuthenticated = !!(req
         ?.nextauth
             ?.token);
-    const isPublicRoute = req.nextUrl.pathname.startsWith('/login');
+            const isPublicRoute = req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/register');
     const isAdminRoute = req.nextUrl.pathname.startsWith('/api/admin') || req.nextUrl.pathname.startsWith('/admin');
     if (!isAuthenticated && !isPublicRoute) {
         console.log(url.pathname, "middleware url pathname before")
@@ -46,6 +46,7 @@ export const config = {
        * - _next/image (image optimization files)
        * - favicon.ico (favicon file)
        * - login (login route)
+       * - register (register route)
        */
-        '/((?!_next/static|_next/image|favicon.ico|login).*)']
+        '/((?!_next/static|_next/image|favicon.ico|login|register).*)']
 }

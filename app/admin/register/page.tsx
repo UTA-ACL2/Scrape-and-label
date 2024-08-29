@@ -2,6 +2,7 @@
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import api from '../../api/api';
+import { toast } from 'react-toastify';
 
 type User = {
     _id: string;
@@ -45,9 +46,11 @@ export default function Page() {
         if (response.status === 200) {
             // Redirect to the login page after successful registration
             fetchUsers();
+            toast.success('Registration successful');
         } else {
             // Handle error here
             console.error('Registration failed');
+            toast.error('Registration failed');
         }
     };
 
@@ -70,6 +73,7 @@ export default function Page() {
                     isActive: !user.isActive
                 }
                 : user));
+                toast.success('User state updated');
         }
     };
 

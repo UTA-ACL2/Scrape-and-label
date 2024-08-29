@@ -1,3 +1,4 @@
+
 import {FC, ReactNode} from 'react'
 import { signIn } from "next-auth/react"
 
@@ -15,3 +16,4 @@ const GoogleSignInButton: FC<GoogleSignInButtonProps> = ({children}) => {
 }
 
 export default GoogleSignInButton
+

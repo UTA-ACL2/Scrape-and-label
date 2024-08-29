@@ -64,6 +64,7 @@ export default function Page() {
     const fetchUsers = async() => {
         const response = await api.get('/api/admin/users/getActive');
         setUsers(response.data);
+        toast.success('Users successfully fetched');
     };
     const [selectedKeywordGroupToAssign,
         setselectedKeywordGroupToAssign] = useState("");
@@ -87,6 +88,8 @@ export default function Page() {
             showItemsbyGroup(selectedKeywordGroupToAssign);
         } else {
             console.error('Failed to assign');
+            toast.error('Failed to assign');
+            
         }
 
     }
@@ -111,8 +114,10 @@ export default function Page() {
         });
         if (response.status === 200) {
             console.log('Cookie sent successfully');
+            toast.success('Cookie sent successfully');
         } else {
             console.error('Failed to send cookie');
+            toast.error('Failed to send cookie');
         };
     };
 
@@ -125,8 +130,10 @@ export default function Page() {
                 ?.cookie) 
                 return;
             setCookie(data.cookie);
+            toast.success('Cookie fetched successfully');
         } else {
             console.error('Failed to fetch cookie');
+            toast.error('Failed to fetch cookie');
         }
     };
     useEffect(() => {
@@ -155,9 +162,12 @@ export default function Page() {
                         "supersetid": ""
                     },
                     ...response.data
+                    
                 ]);
+                toast.success('Keywords fetched successfully');
             } else {
                 console.error('Failed to fetch keywords');
+                toast.error('Failed to fetch keywords')
             }
         } catch (error:any) {
             console.log(error)
@@ -178,8 +188,10 @@ export default function Page() {
                 },
                 ...response.data
             ]);
+            toast.success('Keyword groups fetched successfully');
         } else {
             console.error('Failed to fetch keywords groups');
+            toast.error('Failed to fetch keyword groups')
         }
     };
 useEffect(() => {
@@ -202,8 +214,10 @@ useEffect(() => {
                 ...prevKeywords,
                 keyword
             ]);
+            toast.success('Sucessfully added keyword');
         } else {
             console.error('Failed to add keyword');
+            toast.error('Failed to add keyword');
         }
     };
 
@@ -214,8 +228,10 @@ useEffect(() => {
                 ...prevKeywords,
                 keyword
             ]);
+            toast.success('Keyword added successfully');
         } else {
             console.error('Failed to add keyword');
+            toast.error('Failed to add keyword');
         }
     };
 
@@ -223,8 +239,10 @@ useEffect(() => {
         const response = await api.delete(`/api/admin/keywords/remove?keyword=${dropDown}`);
         if (response.status === 200) {
             setKeywords((prevKeywords : any) => (prevKeywords || []).filter((keyword : any) => keyword.name !== dropDown));
+            toast.success('Keyword removed successfully');
         } else {
             console.error('Failed to remove keyword');
+            toast.error('Failed to remove keyword');
         }
     };
 
@@ -274,11 +292,14 @@ useEffect(() => {
             });
             if (response.status === 200) {
                 fetchKeywords();
+                toast.success('Started scraping successfully');
             } else {
                 console.error('Failed to start scraping');
+                toast.error('Failed to start scraping');
             }
         } catch (error) {
             console.error('Failed to start scraping', error);
+            toast.error('Failed to start scraping');
         } finally {
             setIsLoading(false);
         }
