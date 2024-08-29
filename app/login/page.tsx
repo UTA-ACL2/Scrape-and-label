@@ -2,6 +2,7 @@
 import {ChangeEvent, FormEvent, useState, useEffect} from "react";
 import {useRouter} from 'next/navigation';
 import {useSession, signIn, signOut} from "next-auth/react";
+import GoogleSignInButton from '@/app/components/GoogleSignIn';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 
@@ -107,6 +108,11 @@ export default function Page({searchParams} : PageProps) {
                         className={`flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         {isLoading ? 'Signing in...' : 'Sign in'}
                     </button>
+                </div>
+                <div className="mt-6">
+                    <GoogleSignInButton>
+                        Sign in with Google
+                    </GoogleSignInButton>
                 </div>
                 {searchParams.error && (
                     <p className="text-red-600 text-center capitalize">

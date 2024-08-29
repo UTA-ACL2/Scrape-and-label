@@ -143,7 +143,7 @@ export default function Page() {
                         <input type="file" className="file-input file-input-ghost w-full max-w-xs" 
                         accept='.jpeg, .png, .jpg' id='file-upload' name='myFile'
                         onChange={(e) => handleFileUpload(e) } />
-
+                        <span className="text-sm text-gray-500">Image Upload is optional</span>
                         {!isChangingPassword && (
                             <div>
                                 <label
